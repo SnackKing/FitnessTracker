@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.harshil.zach.fitnesstracker.LoginActivity">
+    tools:context="com.harshil.zach.fitnesstracker.SignUpActivity">
 
     <!-- Login progress -->
     <ProgressBar
@@ -30,23 +29,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/logo" />
-
-            <TextView
-                android:id="@+id/loginHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Welcome to [App Name]"
-                android:textAlignment="center"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:padding="20dp"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -69,9 +51,12 @@
 
                 <EditText
                     android:id="@+id/password"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_width="fill_parent"
                     android:hint="@string/prompt_password"
+                    android:imeActionId="6"
+                    android:imeActionLabel="@string/action_sign_in_short"
+                    android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true" />
@@ -80,38 +65,13 @@
 
             <Button
                 android:id="@+id/email_sign_in_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in_short"
-                android:background="@color/colorAccent"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/orSignUp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="0dp"
-                android:paddingTop="10dp"
-                android:text="Dont't have an account?"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/email_goToSignUp"
                 style="?android:textAppearanceSmall"
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@color/colorAccent"
-                android:textColor="@android:color/white"
-                android:text="@string/go_to_signup"
+                android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
         </LinearLayout>
-
-
-
-
     </ScrollView>
 </LinearLayout>
