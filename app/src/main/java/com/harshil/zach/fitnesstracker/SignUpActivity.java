@@ -1,5 +1,6 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -71,9 +72,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         //calling register method on click
-        registerUser();
+        registerUser(view.getContext());
     }
-    private void registerUser(){
+    private void registerUser(final Context context){
 
         //creating a new user
         String email = mEmailView.getText().toString().trim();
@@ -86,6 +87,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         if(task.isSuccessful()){
                             //signup successful
                             Toast.makeText(SignUpActivity.this,"Successfully registered",Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(context, StepCountActivity.class);
+                            context.startActivity(intent);
 
                         }else{
                             //signup failed

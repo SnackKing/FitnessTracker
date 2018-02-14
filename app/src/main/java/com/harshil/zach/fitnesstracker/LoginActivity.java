@@ -1,5 +1,6 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -64,11 +65,11 @@ public class LoginActivity extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                authenticateUser();
+                authenticateUser(view.getContext());
             }
         });
     }
-    private void authenticateUser() {
+    private void authenticateUser(final Context context) {
         //get user input
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString().trim();
@@ -80,7 +81,9 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                            //updateUI(user);
+                            Intent intent = new Intent(context, StepCountActivity.class);
+                            context.startActivity(intent);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
@@ -92,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
 
 }

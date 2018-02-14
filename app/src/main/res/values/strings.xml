@@ -15,8 +15,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name = "go_to_signup">Go Sign up</string>
-    <string name = "go_to_signIn">Go Sign in</string>
+    <string name="go_to_signup">Go Sign up</string>
+    <string name="go_to_signIn">Go Sign in</string>
 
     <string name="title_activity_sign_up">Sign Up</string>
+    <string name="title_activity_step_count">StepCountActivity</string>
 </resources>
