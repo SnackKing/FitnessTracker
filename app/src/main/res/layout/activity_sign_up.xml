@@ -35,14 +35,14 @@
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:padding="20dp"/>
+                android:padding="0dp"/>
 
                 <EditText
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_name"
-                    android:layout_margin="15dp"
+                    android:layout_margin="10dp"
                     android:maxLines="1"
                     android:singleLine="true" />
 
@@ -50,7 +50,7 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
+                    android:layout_margin="10dp"
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
@@ -60,7 +60,7 @@
                 <EditText
                     android:id="@+id/password"
                     android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
+                    android:layout_margin="10dp"
                     android:layout_width="fill_parent"
                     android:hint="@string/prompt_password"
                     android:inputType="textPassword"
@@ -88,7 +88,7 @@
                 android:textSize="16sp" />
 
             <Button
-                android:id="@+id/email_goToSignIn"
+                android:id="@+id/goToSignIn"
                 style="?android:textAppearanceSmall"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"

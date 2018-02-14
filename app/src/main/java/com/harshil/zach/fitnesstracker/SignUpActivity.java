@@ -1,5 +1,6 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -55,6 +56,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         mPasswordView = (EditText) findViewById(R.id.password);
 
         Button mEmailSignUpButton = (Button) findViewById(R.id.email_sign_up_button);
+        Button goToSignIn = (Button) findViewById(R.id.goToSignIn);
+        goToSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(),LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
       //  mLoginFormView = findViewById(R.id.login_form);
         mEmailSignUpButton.setOnClickListener(this);
@@ -69,8 +78,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         //creating a new user
         String email = mEmailView.getText().toString().trim();
         String password  = mPasswordView.getText().toString().trim();
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
