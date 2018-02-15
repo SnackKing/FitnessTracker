@@ -23,6 +23,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
@@ -79,25 +82,57 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         //creating a new user
         String email = mEmailView.getText().toString().trim();
         String password  = mPasswordView.getText().toString().trim();
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+        boolean valid = true;
+        if(!isEmailValid(email) && valid){
+            mEmailView.requestFocus();
+            mEmailView.setError("Invalid email");
+            valid = false;
 
-                        //checking if success
-                        if(task.isSuccessful()){
-                            //signup successful
-                            Toast.makeText(SignUpActivity.this,"Successfully registered",Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(context, StepCountActivity.class);
-                            context.startActivity(intent);
+        }
+        //Android seem to only allow one error message at a time.
+        if(!isPasswordValid(password) && valid){
+            mPasswordView.requestFocus();
+            mPasswordView.setError("Password must be at least 8 characters at have 1 letter, 1 number and 1 special character");
+            valid = false;
+        }
+        if(valid) {
 
-                        }else{
-                            //signup failed
-                            Toast.makeText(SignUpActivity.this,"Error while registering",Toast.LENGTH_LONG).show();
 
-                        }
+            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    //checking if success
+                    if (task.isSuccessful()) {
+                        //signup successful
+                        Toast.makeText(SignUpActivity.this, "Successfully registered", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(context, StepCountActivity.class);
+                        context.startActivity(intent);
+
+                    } else {
+                        //signup failed
+                        Toast.makeText(SignUpActivity.this, "Error while registering", Toast.LENGTH_LONG).show();
 
                     }
-                });
+
+                }
+            });
+        }
+
+    }
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+    public static boolean isPasswordValid(final String password) {
+        Pattern pattern;
+        Matcher matcher;
+        final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{4,}$";
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(password);
+        return matcher.matches();
 
     }
 
