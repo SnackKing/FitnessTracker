@@ -9,12 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <!--<Switch-->
-            <!--android:id="@+id/toggleChallenges"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:paddingTop="10dp"-->
-            <!--android:text="Show Completed Challenges" />-->
+        <Switch
+            android:id="@+id/toggleChallenges"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:marginTop="30dp"
+            android:marginBottom="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="Hide Completed Challenges" />
         <ListView
             android:id="@+id/list"
             android:layout_width="match_parent"

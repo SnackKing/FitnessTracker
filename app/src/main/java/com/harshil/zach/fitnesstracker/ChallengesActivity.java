@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
@@ -28,8 +30,9 @@ public class ChallengesActivity extends AppCompatActivity {
    // ArrayAdapter<String> adapter;
    ArrayAdapter<String> arrayAdapter;
     List<Challenge> challenges = new ArrayList<>();
-
     private static final String TAG = "ChallengeActivity";
+    boolean includeCompletedChallenges;
+    Switch toggle;
 
 
     @Override
@@ -37,7 +40,9 @@ public class ChallengesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenges);
         Log.i(TAG, "Created challenges view");
+        includeCompletedChallenges = true;
         ListView list = (ListView) findViewById(R.id.list);
+         toggle = (Switch) findViewById(R.id.toggleChallenges);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Challenge1").addValueEventListener(new ValueEventListener() {
             @Override
@@ -55,10 +60,18 @@ public class ChallengesActivity extends AppCompatActivity {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     //Getting the data from snapshot
                     Challenge challenge = postSnapshot.getValue(Challenge.class);
-                    challenges.add(challenge);
-                    //Adding it to a string
-                    String title = challenge.getTitle();
-                    String xp = Integer.toString(challenge.getXp());
+                    boolean isCompleted = challenge.isCompleted();
+                    if(includeCompletedChallenges) {
+                        if (isCompleted) {
+                            challenges.add(challenge);
+                        }
+                    }
+                    else{
+                        if(!isCompleted){
+                            challenges.add(challenge);
+                        }
+                    }
+
                 }
             }
 
@@ -72,6 +85,18 @@ public class ChallengesActivity extends AppCompatActivity {
         challenges.add(challenge);
         System.out.println(challenges.size());
         list.setAdapter(new CustomArrayAdapter(this, challenges));
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(toggle.isChecked()){
+                    includeCompletedChallenges = false;
+                    //re-pull data from firebase
+                }
+                else{
+                    includeCompletedChallenges = true;
+                    //re-pull data from firebase
+                }
+            }
+        });
 
     }
 }
