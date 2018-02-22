@@ -10,6 +10,7 @@ import android.database.Cursor;
 
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 
 import android.widget.AutoCompleteTextView;
@@ -17,11 +18,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.firebase.client.Firebase;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,11 +51,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private View mProgressView;
     private View mLoginFormView;
     private FirebaseAuth firebaseAuth;
+    private static final String TAG = "SignUpActivity";
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "Running onCreate");
         setContentView(R.layout.activity_sign_up);
         //create instance of firebase
         firebaseAuth = FirebaseAuth.getInstance();
@@ -104,6 +111,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                     //checking if success
                     if (task.isSuccessful()) {
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        Firebase ref = new Firebase("https://fitnesstracker-3b324.firebaseio.com/");
+                        //User current = new User();
+                        //ref.child("Users").child(user.getUid()).setValue(current)
+
+
+
+
                         //signup successful
                         Toast.makeText(SignUpActivity.this, "Successfully registered", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(context, StepCountActivity.class);
@@ -134,6 +149,35 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         matcher = pattern.matcher(password);
         return matcher.matches();
 
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "Running onStart");
+
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.d(TAG, "Running onResume");
+    }
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        Log.d(TAG, "Running onPause");
+    }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        Log.d(TAG, "Running onStop");
+    }
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        Log.d(TAG, "Running onDestroy");
     }
 
 

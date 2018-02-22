@@ -5,7 +5,6 @@ package com.harshil.zach.fitnesstracker;
  */
 
 public class Challenge {
-    public boolean completed;
     public int days;
     public int numsteps;
     public String title;
@@ -14,16 +13,13 @@ public class Challenge {
     public Challenge(){
 
     }
-    public Challenge(boolean completed, int days, int numsteps, String title, int xp){
-        this.completed = completed;
+    public Challenge(int days, int numsteps, String title, int xp){
         this.days = days;
         this.numsteps = numsteps;
         this.title = title;
         this.xp = xp;
     }
-    public boolean isCompleted(){
-        return  this.completed;
-    }
+
     public int getDays(){
         return this.days;
     }
@@ -36,6 +32,7 @@ public class Challenge {
     public int getXp(){
         return this.xp;
     }
+
 
 
 }

@@ -12,10 +12,14 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
+import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -28,9 +32,9 @@ public class ChallengesActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
    // ArrayAdapter<String> adapter;
-   ArrayAdapter<String> arrayAdapter;
     List<Challenge> challenges = new ArrayList<>();
     private static final String TAG = "ChallengeActivity";
+    CustomArrayAdapter adapter;
     boolean includeCompletedChallenges;
     Switch toggle;
 
@@ -44,35 +48,20 @@ public class ChallengesActivity extends AppCompatActivity {
         ListView list = (ListView) findViewById(R.id.list);
          toggle = (Switch) findViewById(R.id.toggleChallenges);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Challenge1").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                System.out.println(snapshot.getValue());  //prints "Do you have data? You'll love Firebase."
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
         System.out.println(mDatabase.child("Challenges"));
+
+
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : snapshot.child("Challenges").getChildren()) {
                     //Getting the data from snapshot
                     Challenge challenge = postSnapshot.getValue(Challenge.class);
-                    boolean isCompleted = challenge.isCompleted();
-                    if(includeCompletedChallenges) {
-                        if (isCompleted) {
                             challenges.add(challenge);
-                        }
-                    }
-                    else{
-                        if(!isCompleted){
-                            challenges.add(challenge);
-                        }
-                    }
 
                 }
+                adapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -81,10 +70,9 @@ public class ChallengesActivity extends AppCompatActivity {
             }
         });
 
-        Challenge challenge = new Challenge(false,1,500,"test",100);
-        challenges.add(challenge);
-        System.out.println(challenges.size());
-        list.setAdapter(new CustomArrayAdapter(this, challenges));
+
+        adapter = new CustomArrayAdapter(this,challenges);
+        list.setAdapter(adapter);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(toggle.isChecked()){

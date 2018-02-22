@@ -81,6 +81,10 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = firebaseAuth.getCurrentUser();
+
+
+
+
                             Intent intent = new Intent(context, StepCountActivity.class);
                             context.startActivity(intent);
 
