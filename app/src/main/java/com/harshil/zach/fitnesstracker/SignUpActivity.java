@@ -26,6 +26,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,6 +49,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
+    private EditText mNameView;
     private View mProgressView;
     private View mLoginFormView;
     private FirebaseAuth firebaseAuth;
@@ -58,13 +60,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG, "Running onCreate");
+        Log.d(TAG, "Running onCreate");
         setContentView(R.layout.activity_sign_up);
         //create instance of firebase
         firebaseAuth = FirebaseAuth.getInstance();
+        Firebase.setAndroidContext(this);
+
         // Set up the login form.
         mEmailView = (EditText)findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
+        mNameView = (EditText) findViewById(R.id.name);
 
         Button mEmailSignUpButton = (Button) findViewById(R.id.email_sign_up_button);
         Button goToSignIn = (Button) findViewById(R.id.goToSignIn);
@@ -87,9 +92,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private void registerUser(final Context context){
 
         //creating a new user
-        String email = mEmailView.getText().toString().trim();
+        final String email = mEmailView.getText().toString().trim();
         String password  = mPasswordView.getText().toString().trim();
+        final String name = mNameView.getText().toString().trim();
         boolean valid = true;
+        if(name.length() == 0){
+            mNameView.requestFocus();
+            mNameView.setError("Name can't be blank");
+            valid = false;
+        }
+        //Android seem to only allow one error message at a time.
         if(!isEmailValid(email) && valid){
             mEmailView.requestFocus();
             mEmailView.setError("Invalid email");
@@ -112,9 +124,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     //checking if success
                     if (task.isSuccessful()) {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
-                        Firebase ref = new Firebase("https://fitnesstracker-3b324.firebaseio.com/");
-                        //User current = new User();
-                        //ref.child("Users").child(user.getUid()).setValue(current)
+                  //      Firebase ref = new Firebase("https://fitnesstracker-3b324.firebaseio.com/");
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+                        User current = new User(email,name);
+                        ref.child("Users").child(user.getUid()).setValue(current);
 
 
 
