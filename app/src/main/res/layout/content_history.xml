@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.harshil.zach.fitnesstracker.StepCountActivity"
-    tools:showIn="@layout/activity_step_count">
+    tools:context="com.harshil.zach.fitnesstracker.HistoryActivity"
+    tools:showIn="@layout/app_bar_history">
 
 </android.support.constraint.ConstraintLayout>

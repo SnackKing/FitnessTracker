@@ -9,9 +9,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -60,11 +64,20 @@ public class StepCountActivity extends AppCompatActivity {
     TextView stepCount;
     int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE;
     private static final String TAG = "StepCountActivity";
+    private DrawerLayout mDrawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_count);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionbar = getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        
 
         stepCount = (TextView) findViewById(R.id.stepCount);
         if (savedInstanceState != null) {
@@ -157,6 +170,15 @@ public class StepCountActivity extends AppCompatActivity {
 //                    }
 //                });
 //    }
+@Override
+public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+        case android.R.id.home:
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            return true;
+    }
+    return super.onOptionsItemSelected(item);
+}
 
     public void subscribe() {
         // To create a subscription, invoke the Recording API. As soon as the subscription is
