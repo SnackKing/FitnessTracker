@@ -77,7 +77,7 @@ public class StepCountActivity extends AppCompatActivity {
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        
+
 
         stepCount = (TextView) findViewById(R.id.stepCount);
         if (savedInstanceState != null) {
