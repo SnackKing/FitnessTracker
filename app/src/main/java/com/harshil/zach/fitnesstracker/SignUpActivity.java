@@ -81,7 +81,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
-      //  mLoginFormView = findViewById(R.id.login_form);
+        //  mLoginFormView = findViewById(R.id.login_form);
         mEmailSignUpButton.setOnClickListener(this);
     }
     @Override
@@ -124,7 +124,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     //checking if success
                     if (task.isSuccessful()) {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
-                  //      Firebase ref = new Firebase("https://fitnesstracker-3b324.firebaseio.com/");
+                        //      Firebase ref = new Firebase("https://fitnesstracker-3b324.firebaseio.com/");
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
                         User current = new User(email,name);
@@ -196,4 +196,3 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
 
 }
-

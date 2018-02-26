@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -106,18 +107,36 @@ public class StepCountActivity extends AppCompatActivity {
 
             }
         });
-//        final DataSource ds = new DataSource.Builder()
-//                .setAppPackageName("com.google.android.gms")
-//                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-//                .setType(DataSource.TYPE_DERIVED)
-//                .setStreamName("estimated_steps")
-//                .build();
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        int id =menuItem.getItemId();
+                        if(id == R.id.nav_account){
 
-//        final DataReadRequest req = new DataReadRequest.Builder()
-//                .aggregate(ds, DataType.AGGREGATE_STEP_COUNT_DELTA)
-//                .bucketByTime(1, TimeUnit.DAYS)
-//                .setTimeRange(timeBounds[0], timeBounds[1], TimeUnit.MILLISECONDS)
-//                .build();
+                        }
+                        else if(id == R.id.nav_challenges){
+                            Intent intent = new Intent(StepCountActivity.this,ChallengesActivity.class);
+                            startActivity(intent);
+                        }
+                        else if(id == R.id.nav_friends){
+
+                        }
+
+
+
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+
+                        return true;
+                    }
+                });
 
     }
     @Override
