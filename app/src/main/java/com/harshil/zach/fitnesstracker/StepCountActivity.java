@@ -116,7 +116,8 @@ public class StepCountActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
                         int id =menuItem.getItemId();
                         if(id == R.id.nav_account){
-
+                            Intent intent = new Intent(StepCountActivity.this,ProfileActivity.class);
+                            startActivity(intent);
                         }
                         else if(id == R.id.nav_challenges){
                             Intent intent = new Intent(StepCountActivity.this,ChallengesActivity.class);
