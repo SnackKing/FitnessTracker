@@ -1,6 +1,7 @@
 package com.harshil.zach.fitnesstracker;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -12,8 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +25,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -47,6 +55,9 @@ public class ProfileActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         firebaseAuth = FirebaseAuth.getInstance();
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
         FirebaseUser user = firebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
         name = findViewById(R.id.name);
@@ -102,8 +113,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 numFriends.setText(Integer.toString(friendCount));
 
-
-
             }
 
             @Override
@@ -111,6 +120,20 @@ public class ProfileActivity extends AppCompatActivity {
                 System.out.println("Here");
             }
         });
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        if (acct != null) {
+            //profile photo null?
+            Uri googlePhoto = acct.getPhotoUrl();
+            CircleImageView profilePic = findViewById(R.id.profile_image);
+            System.out.println("PRINTING URL");
+            System.out.println(googlePhoto);
+            if(googlePhoto != null) {
+                Picasso.with(this)
+                        .load(googlePhoto)
+                        .into(profilePic);
+            }
+        }
+
     }
 
 }

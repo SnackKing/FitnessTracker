@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
 import com.google.android.gms.auth.api.Auth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,24 +32,31 @@ import java.util.List;
 public class ChallengesActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
-   // ArrayAdapter<String> adapter;
+    private DatabaseReference uDatabase;
+    // ArrayAdapter<String> adapter;
     List<Challenge> challenges = new ArrayList<>();
+
     private static final String TAG = "ChallengeActivity";
     CustomArrayAdapter adapter;
-    boolean includeCompletedChallenges;
+    boolean showCompleted;
     Switch toggle;
+    private FirebaseAuth firebaseAuth;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenges);
-        Log.i(TAG, "Created challenges view");
-        includeCompletedChallenges = true;
+        showCompleted = true;
         ListView list = (ListView) findViewById(R.id.list);
          toggle = (Switch) findViewById(R.id.toggleChallenges);
+         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        System.out.println(mDatabase.child("Challenges"));
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        uDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid()).child("Completed");
+
+
 
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -57,7 +65,7 @@ public class ChallengesActivity extends AppCompatActivity {
                 for (DataSnapshot postSnapshot : snapshot.child("Challenges").getChildren()) {
                     //Getting the data from snapshot
                     Challenge challenge = postSnapshot.getValue(Challenge.class);
-                            challenges.add(challenge);
+                    challenges.add(challenge);
 
                 }
                 adapter.notifyDataSetChanged();
@@ -76,15 +84,54 @@ public class ChallengesActivity extends AppCompatActivity {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(toggle.isChecked()){
-                    includeCompletedChallenges = false;
+                    showCompleted = false;
                     //re-pull data from firebase
+                    pullData();
                 }
                 else{
-                    includeCompletedChallenges = true;
+                    showCompleted = true;
                     //re-pull data from firebase
+                    pullData();
                 }
             }
         });
 
     }
+    public void pullData(){
+        uDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!showCompleted) {
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        Challenge challenge = postSnapshot.getValue(Challenge.class);
+                        removeChallenge(challenge);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+                else{
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        Challenge challenge = postSnapshot.getValue(Challenge.class);
+                        challenges.add(challenge);
+                    }
+                    adapter.notifyDataSetChanged();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        
+    }
+    public void removeChallenge(Challenge target){
+        for(int i = 0; i < challenges.size();i++){
+            Challenge current = challenges.get(i);
+            if(target.title.equals(current.title)){
+                challenges.remove(i);
+            }
+        }
+    }
+
 }
