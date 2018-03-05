@@ -124,7 +124,8 @@ public class StepCountActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                         else if(id == R.id.nav_friends){
-
+                            Intent intent = new Intent(StepCountActivity.this,FriendActivity.class);
+                            startActivity(intent);
                         }
 
 

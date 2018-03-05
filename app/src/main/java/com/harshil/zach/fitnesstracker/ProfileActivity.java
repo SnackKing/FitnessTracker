@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -55,7 +56,7 @@ public class ProfileActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         firebaseAuth = FirebaseAuth.getInstance();
-
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
         FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -72,27 +73,24 @@ public class ProfileActivity extends AppCompatActivity {
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         // set item as selected to persist highlight
                         menuItem.setChecked(true);
-                        int id =menuItem.getItemId();
+                        int id = menuItem.getItemId();
                         if(id == R.id.nav_account){
-                            Intent intent = new Intent(ProfileActivity.this,ProfileActivity.class);
-                            startActivity(intent);
+//                            Intent intent = new Intent(ProfileActivity.this,ProfileActivity.class);
+//                            startActivity(intent);
                         }
                         else if(id == R.id.nav_challenges){
                             Intent intent = new Intent(ProfileActivity.this,ChallengesActivity.class);
                             startActivity(intent);
                         }
                         else if(id == R.id.nav_friends){
-
+                            Intent intent = new Intent(ProfileActivity.this,FriendActivity.class);
+                            startActivity(intent);
                         }
-
-
-
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
 
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-
                         return true;
                     }
                 });
@@ -134,6 +132,15 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
 
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

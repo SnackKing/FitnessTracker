@@ -27,4 +27,5 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_friend">FriendActivity</string>
 </resources>
