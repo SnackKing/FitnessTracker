@@ -32,6 +32,13 @@
             android:label="FitnessTracker"
             android:theme="@style/AppTheme.NoActionBar">
 
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity
+            android:name=".ChallengesActivity"
+            android:label="FitnessTracker">
+
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
 
@@ -50,10 +57,6 @@
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".FriendActivity"
-            android:label="@string/title_activity_friend"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

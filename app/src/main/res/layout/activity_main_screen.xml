@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.harshil.zach.fitnesstracker.MainScreen">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="30dp"
+            android:paddingBottom="15dp"
+            >
+
+            <ImageView
+                android:id="@+id/userIcon"
+                android:layout_width="88dp"
+                android:layout_height="59dp"
+                android:src="@drawable/user_icon"
+                android:paddingLeft="15dp"
+                android:paddingEnd="15dp"/>
+
+            <TextView
+                android:id="@+id/stepDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5000 steps today!"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:paddingEnd = "15dp"/>
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RANK"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textStyle="bold" 
+            android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerInParent="true"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="x/y completed"/>
+
+        </RelativeLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp">
+
+            <ImageView
+                android:id="@+id/trophyIcon"
+                android:layout_width="88dp"
+                android:layout_height="59dp"
+                android:paddingEnd="15dp"
+                android:paddingLeft="15dp"
+                android:src="@drawable/trophy_icon" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="15dp"
+                >
+            
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text = "Take 1000 steps today"
+                    android:id = "@+id/challengeText"
+                    android:layout_centerHorizontal="true"/>
+
+                <ProgressBar
+                    style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+                    android:layout_height = "wrap_content"
+                    android:layout_width = "match_parent"
+                    android:progress="60"
+                    android:layout_below="@id/challengeText"
+                    android:id = "@+id/progress_bar"
+                />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/progress_bar"
+                    android:text="All Challenges"
+                    android:id = "@+id/challenges"/>
+            </RelativeLayout>
+
+
+
+            
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="88dp"
+                android:layout_height="59dp"
+                android:paddingEnd="15dp"
+                android:paddingLeft="15dp"
+                android:src="@drawable/friends_icon" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="15dp">
+
+                <TextView
+                    android:id="@+id/friendText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Ann just reached rank 4!" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/friendText"
+                    android:text = "Your Friends"
+                    android:id = "@+id/friendsButton"/>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+    </ScrollView>
+</android.support.design.widget.CoordinatorLayout>
