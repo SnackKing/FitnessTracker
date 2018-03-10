@@ -31,21 +31,8 @@
             android:name=".StepCountActivity"
             android:label="FitnessTracker"
             android:theme="@style/AppTheme.NoActionBar">
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
         </activity>
-        <activity
-            android:name=".ChallengesActivity"
-            android:label="FitnessTracker">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
         <activity
             android:name=".ChallengesActivity"
             android:label="FitnessTracker"
