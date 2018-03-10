@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/drawer_layout"
+    android:fitsSystemWindows="true"
+    android:gravity="center_horizontal"
     android:layout_height="match_parent"
     tools:context="com.harshil.zach.fitnesstracker.MainScreen">
     <ScrollView
@@ -35,8 +38,8 @@
 
             <ImageView
                 android:id="@+id/userIcon"
-                android:layout_width="88dp"
-                android:layout_height="59dp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
                 android:src="@drawable/user_icon"
                 android:paddingLeft="15dp"
                 android:paddingEnd="15dp"/>
@@ -45,9 +48,15 @@
                 android:id="@+id/stepDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingEnd="15dp"
                 android:text="5000 steps today!"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:paddingEnd = "15dp"/>
+                android:textSize="24sp" />
+            <Button
+                android:id="@+id/update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="update" />
         </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -164,4 +173,12 @@
 
     </LinearLayout>
     </ScrollView>
-</android.support.design.widget.CoordinatorLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/nav_drawer"
+        app:headerLayout="@layout/nav_header"/>
+</android.support.v4.widget.DrawerLayout>

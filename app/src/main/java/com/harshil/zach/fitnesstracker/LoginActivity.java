@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                            Intent intent = new Intent(context, StepCountActivity.class);
+                            Intent intent = new Intent(context, MainScreen.class);
                             context.startActivity(intent);
 
                         } else {

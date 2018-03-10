@@ -71,7 +71,7 @@ public class StepCountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_step_count);
+        setContentView(R.layout.activity_main_screen);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -107,7 +107,7 @@ public class StepCountActivity extends AppCompatActivity {
 
             }
         });
-        NavigationView navigationView = findViewById(R.id.nav_view);
+               NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
