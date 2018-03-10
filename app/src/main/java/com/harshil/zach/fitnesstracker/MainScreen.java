@@ -250,7 +250,7 @@ public class MainScreen extends AppCompatActivity {
         int exp = (int) total;
         exp = exp/100;
         mDatabase.child("xp").setValue(userExp + exp);
-        
+
     }
 
 
