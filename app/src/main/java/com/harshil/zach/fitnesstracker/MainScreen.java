@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,14 +41,20 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+
+import static java.lang.Math.toIntExact;
 
 
 public class MainScreen extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private DrawerLayout mDrawerLayout;
+    private DatabaseReference mDatabase;
+
     private static final int REQUEST_OAUTH = 1;
     private static final String AUTH_PENDING = "auth_state_pending";
     private boolean authInProgress = false;
@@ -56,6 +63,8 @@ public class MainScreen extends AppCompatActivity {
     TextView stepCount;
     int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE;
     private static final String TAG = "MainScreenActivity";
+    int userExp;
+    int userRank;
 
 
 
@@ -73,6 +82,8 @@ public class MainScreen extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.drawer_layout);
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());;
+
         stepCount = (TextView) findViewById(R.id.stepDisplay);
         Button allChallenges = (Button) findViewById(R.id.challenges);
         allChallenges.setOnClickListener(new View.OnClickListener() {
@@ -143,9 +154,25 @@ public class MainScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 readData();
-
             }
         });
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                userExp = user.xp();
+                userRank = user.getRank();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                    //Something bad happened
+            }
+        });
+
+
     }
     @Override
     protected void onResume(){
@@ -206,6 +233,7 @@ public class MainScreen extends AppCompatActivity {
                                 Log.i(TAG, "Total steps: " + total);
                                 stepCount.setText(Long.toString(total) + " steps");
                                 Toast.makeText(MainScreen.this,"Updating step count",Toast.LENGTH_SHORT).show();
+                                addExperience(total);
                             }
                         })
                 .addOnFailureListener(
@@ -217,6 +245,12 @@ public class MainScreen extends AppCompatActivity {
 
                             }
                         });
+    }
+    private void addExperience(final long total){
+        int exp = (int) total;
+        exp = exp/100;
+        mDatabase.child("xp").setValue(userExp + exp);
+        
     }
 
 
