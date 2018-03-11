@@ -65,7 +65,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         //create instance of firebase
         firebaseAuth = FirebaseAuth.getInstance();
         Firebase.setAndroidContext(this);
-
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if(user != null){
+            Intent intent = new Intent(getApplicationContext(),MainScreen.class);
+            startActivity(intent);
+        }
         // Set up the login form.
         mEmailView = (EditText)findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
