@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -200,24 +201,6 @@ public class MainScreen extends AppCompatActivity {
                     //Something bad happened
             }
         });
-        //get list of ranks
-//        rankDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-//                    Rank current = postSnapshot.getValue(Rank.class);
-//                    ranks.add(current);
-//                }
-//                if(userRank != -1){
-//                    userNextRank = ranks.get(userRank);
-//                }
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                //something bad happened
-//            }
-//        });
-
 
     }
     @Override
@@ -240,8 +223,23 @@ public class MainScreen extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            case R.id.action_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_Faq:
+                //launch faq activity
+            case R.id.action_about:
+                //launch about activity
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
     }
     public void subscribe() {
         // To create a subscription, invoke the Recording API. As soon as the subscription is
