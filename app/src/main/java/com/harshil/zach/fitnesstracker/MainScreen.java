@@ -309,6 +309,18 @@ public class MainScreen extends AppCompatActivity {
         float percent = decimal * 100;
         progress.setDonut_progress(Integer.toString(Math.round(percent)));
         progress.setText(userExp + "/" + userNextRank.getXp());
+        if(percent == 100){
+            increaseRank();
+        }
+    }
+    private void increaseRank(){
+        int oldRank = userRank;
+        mDatabase.child("Users").child(user.getUid()).child("rank").setValue(userNextRank.level());
+        userNextRank = ranks.get(userRank+1);
+        rank.setText(Integer.toString(oldRank+1));
+        userRank ++;
+        calculatePercent();
+
     }
 
 
