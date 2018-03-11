@@ -49,6 +49,7 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static java.lang.Math.toIntExact;
@@ -74,6 +75,7 @@ public class MainScreen extends AppCompatActivity {
     DonutProgress progress;
     TextView rank;
     ArrayList<Rank> ranks;
+    ArrayList<Challenge> challenges;
     Rank userNextRank;
     FirebaseUser user;
 
@@ -89,6 +91,7 @@ public class MainScreen extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ranks = new ArrayList<>();
+        challenges = new ArrayList<>();
         userExp = -1;
         userRank = -1;
         lastCheckedSteps = 0;
@@ -186,10 +189,23 @@ public class MainScreen extends AppCompatActivity {
                 userExp = user.xp();
                 userRank = user.getRank();
                 rank.setText(Integer.toString(userRank));
-
+                //get list of completed challenges
+                ArrayList<Integer> completed = new ArrayList<>();
+                for (DataSnapshot postSnapshot : dataSnapshot.child("Users").child(currentUser.getUid()).child("Completed").getChildren()) {
+                    Challenge currentCompleted = postSnapshot.getValue(Challenge.class);
+                    completed.add(currentCompleted.getId());
+                }
+                //get list of ranks
                 for (DataSnapshot postSnapshot : dataSnapshot.child("Ranks").getChildren()) {
                     Rank current = postSnapshot.getValue(Rank.class);
                     ranks.add(current);
+                }
+
+                for (DataSnapshot postSnapshot : dataSnapshot.child("Challenges").getChildren()) {
+                    Challenge currentChallenge = postSnapshot.getValue(Challenge.class);
+                    if(!completed.contains(currentChallenge.getId())){
+                        challenges.add(currentChallenge);
+                    }
                 }
                 if(ranks.size() != 0){
                     userNextRank = ranks.get(userRank);
@@ -275,7 +291,7 @@ public class MainScreen extends AppCompatActivity {
                                                 ? 0
                                                 : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
                                 Log.i(TAG, "Total steps: " + total);
-                                stepCount.setText(Long.toString(total) + " steps");
+                                stepCount.setText(Long.toString(total));
                                 Toast.makeText(MainScreen.this,"Updating step count",Toast.LENGTH_SHORT).show();
                                 addExperience(total);
                             }
@@ -301,13 +317,14 @@ public class MainScreen extends AppCompatActivity {
         SharedPreferences.Editor editor= sharedPref.edit();
         editor.putLong("lastChecked", total);
         editor.apply();
+        checkChallenges();
     }
     private void calculatePercent(){
         float decimal = (float)userExp/userNextRank.getXp();
         float percent = decimal * 100;
         progress.setDonut_progress(Integer.toString(Math.round(percent)));
         progress.setText(userExp + "/" + userNextRank.getXp());
-        if(percent == 100){
+        if(percent >= 100){
             increaseRank();
         }
     }
@@ -318,6 +335,25 @@ public class MainScreen extends AppCompatActivity {
         rank.setText(Integer.toString(oldRank+1));
         userRank ++;
         calculatePercent();
+
+    }
+    private void checkChallenges(){
+        int i = 0;
+        while(i < challenges.size()){
+            Challenge current = challenges.get(i);
+            int requirement = current.getNumsteps();
+            int currentStepCount = Integer.parseInt(stepCount.getText().toString());
+            if(currentStepCount >= requirement){
+                challenges.remove(0);
+                int exp = current.getXp();
+                mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
+                mDatabase.child("Users").child(user.getUid()).child("Completed").child("Challenge" + current.getId()).setValue(current);
+                userExp += exp;
+                calculatePercent();
+
+            }
+            i++;
+        }
 
     }
 
