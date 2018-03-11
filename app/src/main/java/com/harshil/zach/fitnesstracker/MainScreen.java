@@ -2,6 +2,7 @@ package com.harshil.zach.fitnesstracker;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,6 +48,8 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.ArrayList;
+
 import static java.lang.Math.toIntExact;
 
 
@@ -64,7 +68,14 @@ public class MainScreen extends AppCompatActivity {
     int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE;
     private static final String TAG = "MainScreenActivity";
     int userExp;
+    long lastCheckedSteps;
     int userRank;
+    DonutProgress progress;
+    TextView rank;
+    ArrayList<Rank> ranks;
+    Rank userNextRank;
+    FirebaseUser user;
+
 
 
 
@@ -76,15 +87,24 @@ public class MainScreen extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ranks = new ArrayList<>();
+        userExp = -1;
+        userRank = -1;
+        lastCheckedSteps = 0;
+
+
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());;
-
+       user = firebaseAuth.getCurrentUser();
+         progress = findViewById(R.id.donut_progress);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference rankDatabase = FirebaseDatabase.getInstance().getReference().child("Ranks");
+        rank = findViewById(R.id.rank);
         stepCount = (TextView) findViewById(R.id.stepDisplay);
+
         Button allChallenges = (Button) findViewById(R.id.challenges);
         allChallenges.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,24 +180,50 @@ public class MainScreen extends AppCompatActivity {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 userExp = user.xp();
                 userRank = user.getRank();
+                rank.setText(Integer.toString(userRank));
 
+                for (DataSnapshot postSnapshot : dataSnapshot.child("Ranks").getChildren()) {
+                    Rank current = postSnapshot.getValue(Rank.class);
+                    ranks.add(current);
+                }
+                if(ranks.size() != 0){
+                    userNextRank = ranks.get(userRank);
+                }
+                readData();
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                     //Something bad happened
             }
         });
+        //get list of ranks
+//        rankDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+//                    Rank current = postSnapshot.getValue(Rank.class);
+//                    ranks.add(current);
+//                }
+//                if(userRank != -1){
+//                    userNextRank = ranks.get(userRank);
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                //something bad happened
+//            }
+//        });
 
 
     }
     @Override
     protected void onResume(){
         super.onResume();
-        readData();
+      //  readData();
     }
 
     @Override
@@ -247,10 +293,22 @@ public class MainScreen extends AppCompatActivity {
                         });
     }
     private void addExperience(final long total){
-        int exp = (int) total;
+        SharedPreferences sharedPref= getSharedPreferences("mypref", 0);
+        lastCheckedSteps = sharedPref.getLong("lastChecked", 0);
+        int exp = (int) total - (int)lastCheckedSteps;
         exp = exp/100;
-        mDatabase.child("xp").setValue(userExp + exp);
-
+        mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
+        userExp += exp;
+        calculatePercent();
+        SharedPreferences.Editor editor= sharedPref.edit();
+        editor.putLong("lastChecked", total);
+        editor.apply();
+    }
+    private void calculatePercent(){
+        float decimal = (float)userExp/userNextRank.getXp();
+        float percent = decimal * 100;
+        progress.setDonut_progress(Integer.toString(Math.round(percent)));
+        progress.setText(userExp + "/" + userNextRank.getXp());
     }
 
 

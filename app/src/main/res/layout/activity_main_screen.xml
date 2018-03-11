@@ -63,6 +63,7 @@
             android:layout_height="match_parent"
             >
         <TextView
+            android:id="@+id/rank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="RANK"
@@ -74,18 +75,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ProgressBar
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_centerInParent="true"
-                />
-
-            <TextView
+            <com.github.lzyzsd.circleprogress.DonutProgress
+                android:id="@+id/donut_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:text="x/y completed"/>
+                app:donut_text="x/y"
+                app:donut_text_color="@android:color/black"
+                app:donut_circle_starting_degree="270"
+                app:donut_finished_color="@color/colorAccent"
+                android:layout_centerInParent="true" />
+
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:text="x/y completed"/>-->
 
         </RelativeLayout>
         
