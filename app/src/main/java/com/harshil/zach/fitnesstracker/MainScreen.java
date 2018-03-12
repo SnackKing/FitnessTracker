@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +83,8 @@ public class MainScreen extends AppCompatActivity {
     ArrayList<Challenge> challenges;
     Rank userNextRank;
     FirebaseUser user;
+    TextView challenge;
+    ProgressBar challengeProgress;
 
 
 
@@ -108,6 +111,8 @@ public class MainScreen extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
        user = firebaseAuth.getCurrentUser();
          progress = findViewById(R.id.donut_progress);
+         challenge = findViewById(R.id.challengeText);
+         challengeProgress = findViewById(R.id.challenge_progress_bar);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseReference rankDatabase = FirebaseDatabase.getInstance().getReference().child("Ranks");
         rank = findViewById(R.id.rank);
@@ -315,12 +320,12 @@ public class MainScreen extends AppCompatActivity {
         SharedPreferences sharedPref= getSharedPreferences("mypref", 0);
         lastCheckedSteps = sharedPref.getLong("lastChecked", 0);
         String datePlaced = sharedPref.getString("datePlaced","");
-        Date strDate = null;
+        Date strDate = new Date();
         Date now = null;
         String nowString = sdf.format(new Date());
 
         if(datePlaced.equals("")){
-            strDate = new Date();
+            datePlaced = sdf.format(new Date());
         }
             try {
                 strDate = sdf.parse(datePlaced);
@@ -368,10 +373,18 @@ public class MainScreen extends AppCompatActivity {
     }
     private void checkChallenges(){
         int i = 0;
+        float maxProgress = -1;
+        Challenge closestChallenge = null;
         while(i < challenges.size()){
             Challenge current = challenges.get(i);
-            int requirement = current.getNumsteps();
+            int requirement = current.getNumSteps();
             int currentStepCount = Integer.parseInt(stepCount.getText().toString());
+            float currentProgress = (float)currentStepCount/requirement;
+            float percent = currentProgress * 100;
+            if(percent < 100 && percent > maxProgress){
+                maxProgress = percent;
+                closestChallenge = current;
+            }
             if(currentStepCount >= requirement){
                 challenges.remove(0);
                 int exp = current.getXp();
@@ -382,6 +395,14 @@ public class MainScreen extends AppCompatActivity {
 
             }
             i++;
+        }
+        if(closestChallenge == null && challenges.size() == 0){
+            challenge.setText("All challenges completed");
+            challengeProgress.setProgress(0);
+        }
+        else{
+            challenge.setText(closestChallenge.getTitle());
+            challengeProgress.setProgress(Math.round(maxProgress));
         }
 
     }

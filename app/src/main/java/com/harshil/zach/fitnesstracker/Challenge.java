@@ -6,7 +6,7 @@ package com.harshil.zach.fitnesstracker;
 
 public class Challenge {
     public int days;
-    public int numsteps;
+    public int numSteps;
     public String title;
     public int xp;
     public int id;
@@ -14,9 +14,9 @@ public class Challenge {
     public Challenge(){
 
     }
-    public Challenge(int days, int numsteps, String title, int xp, int id){
+    public Challenge(int days, int numSteps, String title, int xp, int id){
         this.days = days;
-        this.numsteps = numsteps;
+        this.numSteps = numSteps;
         this.title = title;
         this.xp = xp;
         this.id = id;
@@ -25,8 +25,8 @@ public class Challenge {
     public int getDays(){
         return this.days;
     }
-    public int getNumsteps(){
-        return this.numsteps;
+    public int getNumSteps(){
+        return this.numSteps;
     }
     public String getTitle(){
         return this.title;

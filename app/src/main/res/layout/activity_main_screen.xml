@@ -77,8 +77,8 @@
 
             <com.github.lzyzsd.circleprogress.DonutProgress
                 android:id="@+id/donut_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 app:donut_text="x/y"
                 app:donut_text_color="@android:color/black"
                 app:donut_circle_starting_degree="270"
@@ -116,7 +116,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text = "Take 1000 steps today"
+                    android:text = "Retrieving Challenge"
                     android:id = "@+id/challengeText"
                     android:layout_centerHorizontal="true"/>
 
@@ -124,15 +124,17 @@
                     style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
                     android:layout_height = "wrap_content"
                     android:layout_width = "match_parent"
-                    android:progress="60"
+                    android:progress="0"
                     android:layout_below="@id/challengeText"
-                    android:id = "@+id/progress_bar"
-                />
+                    android:id = "@+id/challenge_progress_bar"
+                    android:progressTint="@color/colorAccent"
+
+                    />
 
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/progress_bar"
+                    android:layout_below="@id/challenge_progress_bar"
                     android:text="All Challenges"
                     android:id = "@+id/challenges"/>
             </RelativeLayout>
