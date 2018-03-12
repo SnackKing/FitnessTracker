@@ -50,7 +50,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import static java.lang.Math.toIntExact;
 
@@ -307,15 +311,40 @@ public class MainScreen extends AppCompatActivity {
                         });
     }
     private void addExperience(final long total){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
         SharedPreferences sharedPref= getSharedPreferences("mypref", 0);
         lastCheckedSteps = sharedPref.getLong("lastChecked", 0);
+        String datePlaced = sharedPref.getString("datePlaced","");
+        Date strDate = null;
+        Date now = null;
+        String nowString = sdf.format(new Date());
+
+        if(datePlaced.equals("")){
+            strDate = new Date();
+        }
+            try {
+                strDate = sdf.parse(datePlaced);
+                now = sdf.parse(nowString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                strDate = new Date();
+            }
+
+        //last time steps were checked in was yesterday
+        if (now.after(strDate)) {
+            lastCheckedSteps = 0;
+        }
+
         int exp = (int) total - (int)lastCheckedSteps;
         exp = exp/100;
         mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
         userExp += exp;
         calculatePercent();
+        Date c = Calendar.getInstance().getTime();
+        String formattedDate = sdf.format(c);
         SharedPreferences.Editor editor= sharedPref.edit();
         editor.putLong("lastChecked", total);
+        editor.putString("datePlaced",formattedDate);
         editor.apply();
         checkChallenges();
     }

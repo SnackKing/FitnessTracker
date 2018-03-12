@@ -20,7 +20,7 @@
             android:label="@string/app_name" />
         <activity
             android:name=".SignUpActivity"
-            android:label="@string/title_activity_sign_up">
+            android:label="FitnessTracker">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
