@@ -40,14 +40,16 @@
         <activity
             android:name=".HistoryActivity"
             android:label="@string/title_activity_history"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
         <activity
             android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile"
+            android:label="Your Profile"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".FriendActivity"
-            android:label="@string/title_activity_profile"
+            android:label="Friends"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

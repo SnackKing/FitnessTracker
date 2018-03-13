@@ -95,7 +95,7 @@ public class ChallengesActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = firebaseAuth.getCurrentUser();
 
