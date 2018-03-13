@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="15dp"
-                android:text="5000 steps today!"
+                android:text="0"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:textSize="24sp" />
             <Button

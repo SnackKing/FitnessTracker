@@ -85,7 +85,7 @@ public class MainScreen extends AppCompatActivity {
     FirebaseUser user;
     TextView challenge;
     ProgressBar challengeProgress;
-
+    boolean dataRead;
 
 
 
@@ -101,18 +101,18 @@ public class MainScreen extends AppCompatActivity {
         challenges = new ArrayList<>();
         userExp = -1;
         userRank = -1;
+        dataRead = false;
         lastCheckedSteps = 0;
-
-
+        //set up toolbar
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         firebaseAuth = FirebaseAuth.getInstance();
-       user = firebaseAuth.getCurrentUser();
-         progress = findViewById(R.id.donut_progress);
-         challenge = findViewById(R.id.challengeText);
-         challengeProgress = findViewById(R.id.challenge_progress_bar);
+        user = firebaseAuth.getCurrentUser();
+        progress = findViewById(R.id.donut_progress);
+        challenge = findViewById(R.id.challengeText);
+        challengeProgress = findViewById(R.id.challenge_progress_bar);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseReference rankDatabase = FirebaseDatabase.getInstance().getReference().child("Ranks");
         rank = findViewById(R.id.rank);
@@ -209,7 +209,7 @@ public class MainScreen extends AppCompatActivity {
                     Rank current = postSnapshot.getValue(Rank.class);
                     ranks.add(current);
                 }
-
+                //go through all challenges and only consider incomplete challenges.
                 for (DataSnapshot postSnapshot : dataSnapshot.child("Challenges").getChildren()) {
                     Challenge currentChallenge = postSnapshot.getValue(Challenge.class);
                     if(!completed.contains(currentChallenge.getId())){
@@ -219,6 +219,7 @@ public class MainScreen extends AppCompatActivity {
                 if(ranks.size() != 0){
                     userNextRank = ranks.get(userRank);
                 }
+                dataRead = true;
                 readData();
             }
             @Override
@@ -231,7 +232,9 @@ public class MainScreen extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-      //  readData();
+        if(dataRead) {
+            readData();
+        }
     }
 
     @Override
@@ -266,6 +269,10 @@ public class MainScreen extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
+
+    /**
+     * Subscribe to step counter data using Google Fit
+     */
     public void subscribe() {
         // To create a subscription, invoke the Recording API. As soon as the subscription is
         // active, fitness data will start recording.
@@ -315,18 +322,26 @@ public class MainScreen extends AppCompatActivity {
                             }
                         });
     }
+
+    /**
+     * Adds xp to user based on number of steps taken since last check in
+     * @param total
+     * The total number of steps for the day
+     */
     private void addExperience(final long total){
+        //date format for checking if two events occured on different days
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        //get day of last check in
         SharedPreferences sharedPref= getSharedPreferences("mypref", 0);
         lastCheckedSteps = sharedPref.getLong("lastChecked", 0);
         String datePlaced = sharedPref.getString("datePlaced","");
         Date strDate = new Date();
         Date now = null;
         String nowString = sdf.format(new Date());
-
         if(datePlaced.equals("")){
             datePlaced = sdf.format(new Date());
         }
+        //convert dates to simple date format
             try {
                 strDate = sdf.parse(datePlaced);
                 now = sdf.parse(nowString);
@@ -335,24 +350,34 @@ public class MainScreen extends AppCompatActivity {
                 strDate = new Date();
             }
 
-        //last time steps were checked in was yesterday
+        //last time steps were checked in was yesterday. Reset counter
         if (now.after(strDate)) {
             lastCheckedSteps = 0;
         }
-
+        //subtract different in steps to prevent duplicate xp awards
         int exp = (int) total - (int)lastCheckedSteps;
+        //currently 100 steps is 1 xp
         exp = exp/100;
         mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
         userExp += exp;
+        //update UI and potentially rank
         calculatePercent();
         Date c = Calendar.getInstance().getTime();
         String formattedDate = sdf.format(c);
+        //update counter for next check in
         SharedPreferences.Editor editor= sharedPref.edit();
         editor.putLong("lastChecked", total);
         editor.putString("datePlaced",formattedDate);
         editor.apply();
+        //check challenges
         checkChallenges();
     }
+
+    /**
+     * Determines what percent of the xp needed to get to the
+     * next level that the user currently has and updates the UI.
+     * Increases user rank if appropriate
+     */
     private void calculatePercent(){
         float decimal = (float)userExp/userNextRank.getXp();
         float percent = decimal * 100;
@@ -362,6 +387,10 @@ public class MainScreen extends AppCompatActivity {
             increaseRank();
         }
     }
+
+    /**
+     * Increases the user by rank and updates the UI to reflect this
+     */
     private void increaseRank(){
         int oldRank = userRank;
         mDatabase.child("Users").child(user.getUid()).child("rank").setValue(userNextRank.level());
@@ -371,6 +400,13 @@ public class MainScreen extends AppCompatActivity {
         calculatePercent();
 
     }
+
+    /**
+     * Iterates through the list of uncompleted challenges and checks if any have been completed.
+     * If a challenge is completed, then it is added to the users list of completed challenges, xp
+     * gets rewarded, and the UI is updated. This will also get the closest challenge to completion
+     * and display it.
+     */
     private void checkChallenges(){
         int i = 0;
         float maxProgress = -1;
@@ -381,10 +417,12 @@ public class MainScreen extends AppCompatActivity {
             int currentStepCount = Integer.parseInt(stepCount.getText().toString());
             float currentProgress = (float)currentStepCount/requirement;
             float percent = currentProgress * 100;
+            //current challenge is closest to completion
             if(percent < 100 && percent > maxProgress){
                 maxProgress = percent;
                 closestChallenge = current;
             }
+            //challenge completed
             if(currentStepCount >= requirement){
                 challenges.remove(0);
                 int exp = current.getXp();
@@ -396,10 +434,12 @@ public class MainScreen extends AppCompatActivity {
             }
             i++;
         }
+        //no incomplete challenges remain
         if(closestChallenge == null && challenges.size() == 0){
             challenge.setText("All challenges completed");
             challengeProgress.setProgress(0);
         }
+        //update UI to reflect closest challenge to completion
         else{
             challenge.setText(closestChallenge.getTitle());
             challengeProgress.setProgress(Math.round(maxProgress));
