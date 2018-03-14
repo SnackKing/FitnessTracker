@@ -17,7 +17,12 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"/>
+        <SearchView
+            android:id="@+id/findFriend"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
         <ListView
+            android:layout_marginTop="20px"
             android:id="@+id/friendList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

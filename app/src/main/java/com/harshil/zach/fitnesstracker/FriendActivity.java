@@ -1,5 +1,8 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,10 +13,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,7 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendActivity extends AppCompatActivity {
+public class FriendActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private DrawerLayout mDrawerLayout;
     FriendArrayAdapter adapter;
@@ -34,6 +43,9 @@ public class FriendActivity extends AppCompatActivity {
     List<User> friends = new ArrayList<>();
     private DatabaseReference mDatabase;
     private DatabaseReference uDatabase;
+    SearchView editsearch;
+    User foundFriend;
+
 
 
 
@@ -106,9 +118,94 @@ public class FriendActivity extends AppCompatActivity {
         });
         adapter = new FriendArrayAdapter(this,friends);
         list.setAdapter(adapter);
+        editsearch = (SearchView) findViewById(R.id.findFriend);
+        editsearch.setOnQueryTextListener(this);
+
 
 
     }
+    @Override
+    public boolean onQueryTextSubmit(final String query) {
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
+                final String adjustedQuery = query.replace('.',',');
+                final String newFriendId = dataSnapshot.child("email_uid").child(adjustedQuery).getValue(String.class);
+                boolean alreadyExists = false;
+
+                if(newFriendId == null){
+                    Toast toast = Toast.makeText(FriendActivity.this,"No user found with that email",Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.TOP, 0, 250);
+                    toast.show();
+                }
+
+                else {
+                    foundFriend = dataSnapshot.child("Users").child(newFriendId).getValue(User.class);
+                    for(User current: friends){
+                        if(current.getEmail().equals(foundFriend.getEmail())){
+                            alreadyExists = true;
+                        }
+                    }
+                    if(alreadyExists){
+                        Toast toast = Toast.makeText(FriendActivity.this,"This user is already a friend",Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.TOP, 0, 250);
+                        toast.show();
+
+                    }
+                    else {
+
+
+                        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(FriendActivity.this);
+                        LayoutInflater inflater = getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.dialog_friend, null);
+                        dialogBuilder.setView(dialogView);
+                        TextView name = dialogView.findViewById(R.id.name);
+                        TextView email = dialogView.findViewById(R.id.email);
+                        TextView rank = dialogView.findViewById(R.id.rank);
+                        name.setText(foundFriend.getName());
+                        email.setText(foundFriend.getEmail());
+                        rank.setText(Integer.toString(foundFriend.getRank()));
+                        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                mDatabase.child("Users").child(user.getUid()).child("Friends").child(adjustedQuery).setValue(newFriendId);
+                                friends.add(foundFriend);
+                                adapter.notifyDataSetChanged();
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // cancel
+                                dialog.dismiss();
+
+                            }
+                        });
+
+                        dialogBuilder.show();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return false;
+
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        return false;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -120,4 +217,8 @@ public class FriendActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
 }
