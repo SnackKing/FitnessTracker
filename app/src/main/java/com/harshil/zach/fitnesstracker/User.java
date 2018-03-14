@@ -22,6 +22,31 @@ public class User {
         this.xp = 0;
         this.runRank = 1;
     }
+    @Override
+    public boolean equals(Object o)
+    {
+        boolean isEqual= false;
+        if(o == this){
+            return true;
+        }
+        if(!(o instanceof  User)){
+            return false;
+        }
+        else{
+            User u = (User) o;
+            if(u.rank == this.rank && u.xp == this.xp && u.runRank == this.runRank && u.email.equals(this.email) && u.name.equals(this.name)){
+                return true;
+            }
+        }
+        return isEqual;
+    }
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + email.hashCode();
+
+        return result;
+    }
     public String getName(){
         return this.name;
     }
