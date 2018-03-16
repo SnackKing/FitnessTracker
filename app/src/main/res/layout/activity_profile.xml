@@ -24,28 +24,43 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"/>
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
                 android:orientation="vertical"
                 android:layout_gravity="center"
                 android:padding="40dp">
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/profile_image"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center"
-                android:src="@drawable/profile"
-                app:civ_border_width="2dp"
-                app:civ_border_color="#FF000000"/>
+
+
+                    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/profile_image"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/profile"
+                        android:layout_centerHorizontal="true"
+                        app:civ_border_color="#FF000000"
+                        app:civ_border_width="2dp" />
+
+                <ImageButton
+                    android:id="@+id/updatePhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/profile_image"
+                    android:layout_alignParentEnd="true"
+                    android:background="@color/fui_transparent"
+                    android:padding="10dp"
+                    app:srcCompat="@drawable/edit" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Name"
+                    android:gravity="center"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/profile_image"
                     android:textColor="#FFFFFF"
                     android:layout_margin="10dp"
                     android:textSize="18sp"
@@ -54,13 +69,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/name"
                     android:layout_gravity="center"
                     android:text="Email"
                     android:textColor="#FFFFFF"
                     android:layout_margin="10dp"
                     android:textSize="18sp"
                     android:id="@+id/email" />
-            </LinearLayout>
+
+
+            </RelativeLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

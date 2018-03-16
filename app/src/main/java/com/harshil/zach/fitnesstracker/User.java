@@ -1,5 +1,8 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.media.Image;
+import android.net.Uri;
+
 /**
  * Created by Zach on 2/23/2018.
  */
@@ -10,6 +13,7 @@ public class User {
     public int rank;
     public  int xp;
     public int runRank;
+    public String profile;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -21,6 +25,7 @@ public class User {
         this.rank = 1;
         this.xp = 0;
         this.runRank = 1;
+        this.profile = "";
     }
     @Override
     public boolean equals(Object o)
@@ -59,6 +64,7 @@ public class User {
     public int getRunRank(){
         return this.runRank;
     }
+    public String getProfile(){return this.profile;}
 
     public int xp(){
         return this.xp;

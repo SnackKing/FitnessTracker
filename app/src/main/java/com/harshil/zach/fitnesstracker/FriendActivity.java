@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -13,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,9 +33,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -164,6 +170,12 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                         TextView name = dialogView.findViewById(R.id.name);
                         TextView email = dialogView.findViewById(R.id.email);
                         TextView rank = dialogView.findViewById(R.id.rank);
+                        CircleImageView profile = dialogView.findViewById(R.id.profile_image);
+                        String img = foundFriend.getProfile();
+                        if(!img.equals("")){
+                            byte[] imageAsBytes = Base64.decode(img.getBytes(), Base64.DEFAULT);
+                            profile.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+                        }
                         name.setText(foundFriend.getName());
                         email.setText(foundFriend.getEmail());
                         rank.setText(Integer.toString(foundFriend.getRank()));

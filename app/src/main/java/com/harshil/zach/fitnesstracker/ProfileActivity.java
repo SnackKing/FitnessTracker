@@ -1,8 +1,11 @@
 package com.harshil.zach.fitnesstracker;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -11,10 +14,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -29,6 +35,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -41,9 +50,8 @@ public class ProfileActivity extends AppCompatActivity {
     TextView runRank;
     TextView numFriends;
     private FirebaseAuth firebaseAuth;
-
-
-
+    public static final int PICK_IMAGE = 1;
+    CircleImageView profilePic;
 
 
     @Override
@@ -61,11 +69,21 @@ public class ProfileActivity extends AppCompatActivity {
 
         FirebaseUser user = firebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
+        profilePic = findViewById(R.id.profile_image);
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         rank = findViewById(R.id.rank);
         runRank = findViewById(R.id.runRank);
+        ImageButton updateProfile = findViewById(R.id.updatePhoto);
         numFriends = findViewById(R.id.numFriends);
+        updateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, PICK_IMAGE);
+            }
+        });
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -110,6 +128,12 @@ public class ProfileActivity extends AppCompatActivity {
                     friendCount++;
                 }
                 numFriends.setText(Integer.toString(friendCount));
+                System.out.println("PRINTING URL");
+                String img = user.getProfile();
+                if(!img.equals("") && img != null) {
+                    byte[] imageAsBytes = Base64.decode(img.getBytes(), Base64.DEFAULT);
+                    profilePic.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+                }
 
             }
 
@@ -118,19 +142,10 @@ public class ProfileActivity extends AppCompatActivity {
                 System.out.println("Here");
             }
         });
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
             //profile photo null?
-            Uri googlePhoto = acct.getPhotoUrl();
-            CircleImageView profilePic = findViewById(R.id.profile_image);
-            System.out.println("PRINTING URL");
-            System.out.println(googlePhoto);
-            if(googlePhoto != null) {
-                Picasso.with(this)
-                        .load(googlePhoto)
-                        .into(profilePic);
-            }
-        }
+
+
+
 
     }
     @Override
@@ -141,6 +156,30 @@ public class ProfileActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_IMAGE) {
+            if(data != null) {
+                Uri selectedImage = data.getData();
+                profilePic.setImageURI(selectedImage);
+                Bitmap bm = null;
+                try {
+                    bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+                byte[] b = baos.toByteArray();
+                String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                //store result in firebase
+                mDatabase.child("profile").setValue(encodedImage);
+            }
+
+        }
     }
 
 }
