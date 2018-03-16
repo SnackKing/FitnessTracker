@@ -22,7 +22,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_walk" />
+            android:src="@drawable/trophy_icon" />
 
         <TextView
             android:id="@+id/challengeDescription"

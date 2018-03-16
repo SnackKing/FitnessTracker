@@ -36,7 +36,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Challenge>
         Challenge currentChallenge = challengeList.get(position);
 
         ImageView image = (ImageView) listItem.findViewById(R.id.walker);
-        image.setImageResource(R.drawable.ic_walk);
+        image.setImageResource(R.drawable.trophy_icon);
 
         TextView name = (TextView) listItem.findViewById(R.id.challengeDescription);
         name.setText(currentChallenge.getTitle());

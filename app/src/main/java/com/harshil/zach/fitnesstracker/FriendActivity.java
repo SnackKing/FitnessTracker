@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
@@ -217,6 +218,11 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
 
         return false;
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -224,6 +230,20 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            case R.id.action_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_home:
+                Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
+                startActivity(homeIntent);
+                break;
+            case R.id.action_Faq:
+                //launch faq activity
+            case R.id.action_about:
+                //launch about activity
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -180,11 +181,30 @@ public class ChallengesActivity extends AppCompatActivity {
         }
     }
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            case R.id.action_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_home:
+                Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
+                startActivity(homeIntent);
+                break;
+            case R.id.action_Faq:
+                //launch faq activity
+            case R.id.action_about:
+                //launch about activity
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

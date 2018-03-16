@@ -272,6 +272,10 @@ public class MainScreen extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.action_home:
+                Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
+                startActivity(homeIntent);
+                break;
             case R.id.action_Faq:
                 //launch faq activity
             case R.id.action_about:
