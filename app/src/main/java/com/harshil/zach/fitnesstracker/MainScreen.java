@@ -81,11 +81,14 @@ public class MainScreen extends AppCompatActivity {
     TextView rank;
     ArrayList<Rank> ranks;
     ArrayList<Challenge> challenges;
+    ArrayList<String> friendIds;
     Rank userNextRank;
     FirebaseUser user;
+    String userName;
     TextView challenge;
     ProgressBar challengeProgress;
     boolean dataRead;
+    TextView friendText;
 
 
 
@@ -99,6 +102,7 @@ public class MainScreen extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ranks = new ArrayList<>();
         challenges = new ArrayList<>();
+        friendIds = new ArrayList<>();
         userExp = -1;
         userRank = -1;
         dataRead = false;
@@ -112,6 +116,7 @@ public class MainScreen extends AppCompatActivity {
         user = firebaseAuth.getCurrentUser();
         progress = findViewById(R.id.donut_progress);
         challenge = findViewById(R.id.challengeText);
+        friendText = findViewById(R.id.friendText);
         challengeProgress = findViewById(R.id.challenge_progress_bar);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseReference rankDatabase = FirebaseDatabase.getInstance().getReference().child("Ranks");
@@ -126,7 +131,7 @@ public class MainScreen extends AppCompatActivity {
                 startActivity(toChallengesPage);
             }
         });
-        Button friends = (Button) findViewById(R.id.friendsButton);
+        final Button friends = (Button) findViewById(R.id.friendsButton);
         friends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -195,6 +200,7 @@ public class MainScreen extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
+                userName = user.getName();
                 userExp = user.xp();
                 userRank = user.getRank();
                 rank.setText(Integer.toString(userRank));
@@ -216,6 +222,16 @@ public class MainScreen extends AppCompatActivity {
                         challenges.add(currentChallenge);
                     }
                 }
+                for(DataSnapshot postSnapshot: dataSnapshot.child("Users").child(currentUser.getUid()).child("Friends").getChildren()){
+                    String friendId = postSnapshot.getValue(String.class);
+                    friendIds.add(friendId);
+                }
+                String update = dataSnapshot.child("Users").child(currentUser.getUid()).child("Updates").child("latest").getValue(String.class);
+                if(update == null){
+                    update = "No new updates";
+                }
+                friendText.setText(update);
+
                 if(ranks.size() != 0){
                     userNextRank = ranks.get(userRank);
                 }
@@ -398,6 +414,7 @@ public class MainScreen extends AppCompatActivity {
         rank.setText(Integer.toString(oldRank+1));
         userRank ++;
         calculatePercent();
+        pushNotification();
 
     }
 
@@ -445,6 +462,13 @@ public class MainScreen extends AppCompatActivity {
             challengeProgress.setProgress(Math.round(maxProgress));
         }
 
+    }
+    public void pushNotification(){
+        String newRank = rank.getText().toString();
+        String notification = userName + " just reached rank " + newRank.toString();
+        for(String userId: friendIds){
+            mDatabase.child("Users").child(userId).child("Updates").child("latest").setValue(notification);
+        }
     }
 
 
