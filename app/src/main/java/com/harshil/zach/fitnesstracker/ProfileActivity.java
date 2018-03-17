@@ -148,6 +148,10 @@ public class ProfileActivity extends AppCompatActivity {
                                                                         Log.d("ProfileActivity", "User email address updated.");
                                                                         email.setText(newEmailString);
                                                                         mDatabase.child("email").setValue(newEmailString);
+                                                                        String formattedEmail = newEmailString.replace('.',',');
+                                                                        //UPDATE EMAIL_UID TABLE******
+                                                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                                        FirebaseDatabase.getInstance().getReference().child("email_uid").child(formattedEmail).setValue(user.getUid());
                                                                         dialog.dismiss();
                                                                     }
                                                                     else{
