@@ -29,4 +29,7 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_friend">FriendActivity</string>
     <string name="title_activity_main_screen">MainScreen</string>
+    <string name="location_permission_denied">Location Permission Denied</string>
+    <string name="permission_required_toast">Permission Required</string>
+    <string name="permission_rationale_location">Need location for map tracking</string>
 </resources>
