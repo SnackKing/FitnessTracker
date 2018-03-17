@@ -2,6 +2,7 @@ package com.harshil.zach.fitnesstracker;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -97,7 +98,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         //creating a new user
         final String email = mEmailView.getText().toString().trim();
-        String password  = mPasswordView.getText().toString().trim();
+        final String password  = mPasswordView.getText().toString().trim();
         final String name = mNameView.getText().toString().trim();
         boolean valid = true;
         if(name.length() == 0){
@@ -132,9 +133,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
                         User current = new User(email,name);
+                        Context con = getApplicationContext();
                         ref.child("Users").child(user.getUid()).setValue(current);
                         ref.child("email_uid").child(user.getEmail().replace('.',',')).setValue(user.getUid());
                         ref.child("uid_email").child(user.getUid()).setValue(user.getEmail());
+                        SharedPreferences sharedPref = getSharedPreferences("auth",0);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("password", password);
+                        editor.commit();
 
 
 

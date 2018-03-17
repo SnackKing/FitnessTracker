@@ -2,6 +2,7 @@ package com.harshil.zach.fitnesstracker;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
@@ -72,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     private void authenticateUser(final Context context) {
         //get user input
         String email = mEmailView.getText().toString().trim();
-        String password = mPasswordView.getText().toString().trim();
+       final String password = mPasswordView.getText().toString().trim();
         //Sign user in with email and password
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -81,8 +82,10 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-
-
+                            SharedPreferences sharedPref = getSharedPreferences("auth",0);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("password", password);
+                            editor.commit();
 
 
                             Intent intent = new Intent(context, MainScreen.class);

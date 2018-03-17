@@ -1,11 +1,15 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -16,9 +20,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,6 +33,10 @@ import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,8 +47,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -85,6 +100,111 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivityForResult(photoPickerIntent, PICK_IMAGE);
             }
         });
+        ImageButton updateEmail = findViewById(R.id.updateEmail);
+        updateEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.dialog_update_email, null);
+                final AlertDialog dialog = new AlertDialog.Builder(ProfileActivity.this)
+                        .setView(dialogView)
+                        .setTitle("Enter New Email")
+                        .setPositiveButton("Confirm", null) //override the onclick
+                        .setNegativeButton("Cancel", null)
+                        .create();
+
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+
+
+                        Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                        button.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                //validate email
+                                final EditText newEmail = dialog.findViewById(R.id.newEmail);
+                                final String newEmailString = newEmail.getText().toString();
+                                if(isEmailValid(newEmailString)){
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    SharedPreferences sharedPref= getSharedPreferences("auth", 0);
+                                    String password = sharedPref.getString("password", "");
+                                    AuthCredential credential = EmailAuthProvider
+                                            .getCredential(user.getEmail(), password);
+                                    // Prompt the user to re-provide their sign-in credentials
+                                    user.reauthenticate(credential)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    Log.d("ProfileActivity", "User re-authenticated.");
+                                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                    user.updateEmail(newEmailString)
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        Log.d("ProfileActivity", "User email address updated.");
+                                                                        email.setText(newEmailString);
+                                                                        mDatabase.child("email").setValue(newEmailString);
+                                                                        dialog.dismiss();
+                                                                    }
+                                                                    else{
+                                                                        newEmail.setError("Email already taken");
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            });
+                                }
+                                else{
+                                    newEmail.setError("Invalid email");
+
+                                }
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+            }
+        });
+        ImageButton updateName = findViewById(R.id.updateName);
+        updateName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ProfileActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                final View dialogView = inflater.inflate(R.layout.dialog_update_name, null);
+                dialogBuilder.setTitle("Enter New Name");
+                dialogBuilder.setView(dialogView);
+                dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        EditText newName = dialogView.findViewById(R.id.newName);
+                        String newNameString = newName.getText().toString();
+                        if(!newNameString.equals("")) {
+                            mDatabase.child("name").setValue(newNameString);
+                            name.setText(newNameString);
+                        }
+
+                        dialog.dismiss();
+                    }
+                });
+
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // cancel
+                        dialog.dismiss();
+
+                    }
+                });
+
+                dialogBuilder.show();
+            }
+        });
+
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -203,6 +323,12 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
         }
+    }
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 }

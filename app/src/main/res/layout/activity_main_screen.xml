@@ -39,8 +39,8 @@
 
             <ImageView
                 android:id="@+id/userIcon"
-                android:layout_width="88dp"
-                android:layout_height="59dp"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
                 android:src="@drawable/user_icon"
                 android:paddingLeft="15dp"
                 android:paddingEnd="15dp"/>
@@ -105,8 +105,8 @@
 
             <ImageView
                 android:id="@+id/trophyIcon"
-                android:layout_width="88dp"
-                android:layout_height="59dp"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
                 android:paddingEnd="15dp"
                 android:paddingLeft="15dp"
                 android:src="@drawable/trophy_icon" />
@@ -154,8 +154,8 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="88dp"
-                android:layout_height="59dp"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
                 android:paddingEnd="15dp"
                 android:paddingLeft="15dp"
                 android:src="@drawable/friends_icon" />
