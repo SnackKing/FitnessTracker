@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(context, MainScreen.class);
                             context.startActivity(intent);
-
+ 
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(LoginActivity.this, "Login failed.",
