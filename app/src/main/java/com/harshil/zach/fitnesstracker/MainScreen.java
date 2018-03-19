@@ -55,12 +55,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import static java.lang.Math.toIntExact;
 
 
 public class MainScreen extends AppCompatActivity {
+    public class CustomComparator implements Comparator<Rank> {
+        @Override
+        public int compare(Rank o1, Rank o2) {
+            return o1.level() - (o2.level());
+        }
+    }
 
     private FirebaseAuth firebaseAuth;
     private DrawerLayout mDrawerLayout;
@@ -215,6 +223,7 @@ public class MainScreen extends AppCompatActivity {
                     Rank current = postSnapshot.getValue(Rank.class);
                     ranks.add(current);
                 }
+                Collections.sort(ranks,new CustomComparator());
                 //go through all challenges and only consider incomplete challenges.
                 for (DataSnapshot postSnapshot : dataSnapshot.child("Challenges").getChildren()) {
                     Challenge currentChallenge = postSnapshot.getValue(Challenge.class);
