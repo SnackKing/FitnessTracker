@@ -37,7 +37,8 @@
         <activity
             android:name=".ChallengesActivity"
             android:label="FitnessTracker"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".HistoryActivity"
             android:label="@string/title_activity_history"
@@ -51,17 +52,14 @@
             android:label="Friends"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RunningPage">
+            
 
         </activity>
 
 
 
         <activity android:name=".RunningChallenge">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            
         </activity>
 
         <meta-data

@@ -44,13 +44,10 @@ public class RunningPage extends AppCompatActivity {
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 userExp = user.xp();
-
-                int toNextRank = userExp%100;
                 progress = findViewById(R.id.donut_progress);
-                progress.setDonut_progress(Integer.toString(toNextRank));
-
+                progress.setDonut_progress(Integer.toString(userExp));
+                progress.setText(Integer.toString(userExp));
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 //Something bad happened
