@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "911805409789-s1v8tp4al6oip8fmtcjpep7ml239soat.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.harshil.zach.fitnesstracker",
+            "certificate_hash": "10bb96dda6c89d9a0c8fd2875f65c99352edacde"
+          }
+        },
+        {
           "client_id": "911805409789-gte12qtpd6529iir3vtelpqd9qkcofm3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
