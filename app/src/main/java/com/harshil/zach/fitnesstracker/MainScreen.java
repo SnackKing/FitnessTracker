@@ -246,34 +246,6 @@ public class MainScreen extends Fragment {
             }
         }
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-            case R.id.action_sign_out:
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.action_home:
-                Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
-                startActivity(homeIntent);
-                break;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
-        return true;
-    }
-
-
-
-
 
     /**
      * Subscribe to step counter data using Google Fit
