@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.harshil.zach.fitnesstracker.RunningChallenge">
+    tools:context="com.harshil.zach.fitnesstracker.RunningChallengePage">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,8 @@
             android:paddingTop="15dp"
             android:text="Description"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:id = "@+id/description"/>
 
         <TextView
             android:layout_width="match_parent"
