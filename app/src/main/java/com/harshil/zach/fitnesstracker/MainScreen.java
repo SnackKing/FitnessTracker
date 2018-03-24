@@ -6,18 +6,22 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -62,7 +66,7 @@ import java.util.Date;
 import static java.lang.Math.toIntExact;
 
 
-public class MainScreen extends AppCompatActivity {
+public class MainScreen extends Fragment {
     public class CustomComparator implements Comparator<Rank> {
         @Override
         public int compare(Rank o1, Rank o2) {
@@ -71,7 +75,7 @@ public class MainScreen extends AppCompatActivity {
     }
 
     private FirebaseAuth firebaseAuth;
-    private DrawerLayout mDrawerLayout;
+
     private DatabaseReference mDatabase;
 
     private static final int REQUEST_OAUTH = 1;
@@ -97,17 +101,19 @@ public class MainScreen extends AppCompatActivity {
     ProgressBar challengeProgress;
     boolean dataRead;
     TextView friendText;
+    View view;
 
 
 
 
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_screen);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        view = inflater.inflate(R.layout.activity_main_screen, container, false);
+
+
         ranks = new ArrayList<>();
         challenges = new ArrayList<>();
         friendIds = new ArrayList<>();
@@ -115,35 +121,31 @@ public class MainScreen extends AppCompatActivity {
         userRank = -1;
         dataRead = false;
         lastCheckedSteps = 0;
-        //set up toolbar
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
+
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
-        progress = findViewById(R.id.donut_progress);
-        challenge = findViewById(R.id.challengeText);
-        friendText = findViewById(R.id.friendText);
-        challengeProgress = findViewById(R.id.challenge_progress_bar);
+        progress = view.findViewById(R.id.donut_progress);
+        challenge = view.findViewById(R.id.challengeText);
+        friendText = view.findViewById(R.id.friendText);
+        challengeProgress = view.findViewById(R.id.challenge_progress_bar);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseReference rankDatabase = FirebaseDatabase.getInstance().getReference().child("Ranks");
-        rank = findViewById(R.id.rank);
-        stepCount = (TextView) findViewById(R.id.stepDisplay);
+        rank = view.findViewById(R.id.rank);
+        stepCount = (TextView) view.findViewById(R.id.stepDisplay);
 
-        Button allChallenges = (Button) findViewById(R.id.challenges);
+        Button allChallenges = (Button) view.findViewById(R.id.challenges);
         allChallenges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent toChallengesPage = new Intent(MainScreen.this, ChallengesActivity.class);
+                Intent toChallengesPage = new Intent(getActivity(), ChallengesActivity.class);
                 startActivity(toChallengesPage);
             }
         });
-        final Button friends = (Button) findViewById(R.id.friendsButton);
+        final Button friends = (Button) view.findViewById(R.id.friendsButton);
         friends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToFriendsPage = new Intent(MainScreen.this, ProfileActivity.class);
+                Intent goToFriendsPage = new Intent(getActivity(), ProfileActivity.class);
                 startActivity(goToFriendsPage);
             }
         });
@@ -155,47 +157,19 @@ public class MainScreen extends AppCompatActivity {
                 .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
                 .build();
 
-        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), fitnessOptions)) {
+        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(view.getContext()), fitnessOptions)) {
             GoogleSignIn.requestPermissions(
                     this, // your activity
                     GOOGLE_FIT_PERMISSIONS_REQUEST_CODE,
-                    GoogleSignIn.getLastSignedInAccount(this),
+                    GoogleSignIn.getLastSignedInAccount(view.getContext()),
                     fitnessOptions);
         } else {
             //  accessGoogleFit();
             subscribe();
         }
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        int id =menuItem.getItemId();
-                        if(id == R.id.nav_account){
-                            Intent intent = new Intent(MainScreen.this,ProfileActivity.class);
-                            startActivity(intent);
-                        }
-                        else if(id == R.id.nav_challenges){
-                            Intent intent = new Intent(MainScreen.this,ChallengesActivity.class);
-                            startActivity(intent);
-                        }
-                        else if(id == R.id.nav_friends){
-                            Intent intent = new Intent(MainScreen.this,FriendActivity.class);
-                            startActivity(intent);
-                        }
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
 
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-
-                        return true;
-                    }
-                });
-        Button update = (Button) findViewById(R.id.update);
+        Button update = (Button) view.findViewById(R.id.update);
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,9 +227,11 @@ public class MainScreen extends AppCompatActivity {
             }
         });
 
+        return view;
+
     }
     @Override
-    protected void onResume(){
+    public void onResume(){
         super.onResume();
         if(dataRead) {
             readData();
@@ -263,41 +239,17 @@ public class MainScreen extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE) {
                 subscribe();
             }
         }
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-            case R.id.action_sign_out:
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.action_home:
-                Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
-                startActivity(homeIntent);
-                break;
-            case R.id.action_Faq:
-                //launch faq activity
-            case R.id.action_about:
-                //launch about activity
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
-        return true;
-    }
+
+
+
+
 
     /**
      * Subscribe to step counter data using Google Fit
@@ -305,7 +257,7 @@ public class MainScreen extends AppCompatActivity {
     public void subscribe() {
         // To create a subscription, invoke the Recording API. As soon as the subscription is
         // active, fitness data will start recording.
-        Fitness.getRecordingClient(this, GoogleSignIn.getLastSignedInAccount(this))
+        Fitness.getRecordingClient(getActivity(), GoogleSignIn.getLastSignedInAccount(view.getContext()))
                 .subscribe(DataType.TYPE_STEP_COUNT_CUMULATIVE)
                 .addOnCompleteListener(
                         new OnCompleteListener<Void>() {
@@ -325,7 +277,7 @@ public class MainScreen extends AppCompatActivity {
      * current timezone.
      */
     private void readData() {
-        Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this))
+        Fitness.getHistoryClient(getActivity(), GoogleSignIn.getLastSignedInAccount(view.getContext()))
                 .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
                 .addOnSuccessListener(
                         new OnSuccessListener<DataSet>() {
@@ -337,7 +289,7 @@ public class MainScreen extends AppCompatActivity {
                                                 : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
                                 Log.i(TAG, "Total steps: " + total);
                                 stepCount.setText(Long.toString(total));
-                                Toast.makeText(MainScreen.this,"Updating step count",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(),"Updating step count",Toast.LENGTH_SHORT).show();
                                 addExperience(total);
                             }
                         })
@@ -346,7 +298,7 @@ public class MainScreen extends AppCompatActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w(TAG, "There was a problem getting the step count.", e);
-                                Toast.makeText(MainScreen.this,"A problem occurred",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(),"A problem occurred",Toast.LENGTH_SHORT).show();
 
                             }
                         });
@@ -361,7 +313,7 @@ public class MainScreen extends AppCompatActivity {
         //date format for checking if two events occured on different days
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
         //get day of last check in
-        SharedPreferences sharedPref= getSharedPreferences("mypref", 0);
+        SharedPreferences sharedPref= getActivity().getSharedPreferences("mypref", 0);
         lastCheckedSteps = sharedPref.getLong("lastChecked", 0);
         String datePlaced = sharedPref.getString("datePlaced","");
         Date strDate = new Date();

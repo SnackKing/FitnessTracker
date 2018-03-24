@@ -1,9 +1,13 @@
 package com.harshil.zach.fitnesstracker;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class RunningPage extends AppCompatActivity {
+public class RunningPage extends Fragment {
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabase;
@@ -46,20 +50,20 @@ public class RunningPage extends AppCompatActivity {
     List<String> challengeDescriptions = new ArrayList<>();
     List<Integer> challengeIds = new ArrayList<>();
     ArrayAdapter<String> adapter;
-    List<String> test = new ArrayList<>();
 
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_running_page);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        final View view = inflater.inflate(R.layout.activity_running_page, container, false);
 
 
 
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        ListView list = findViewById(R.id.challengeList);
+        ListView list = view.findViewById(R.id.challengeList);
 
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -68,7 +72,7 @@ public class RunningPage extends AppCompatActivity {
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 userExp = user.xp();
-                progress = findViewById(R.id.donut_progress);
+                progress = view.findViewById(R.id.donut_progress);
                 progress.setDonut_progress(Integer.toString(userExp));
                 progress.setText(Integer.toString(userExp));
 
@@ -92,19 +96,18 @@ public class RunningPage extends AppCompatActivity {
 
 
         });
-        adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, challengeDescriptions);
+        adapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, challengeDescriptions);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Intent intent = new Intent(RunningPage.this, RunningChallengePage.class);
+                Intent intent = new Intent(getActivity(), RunningChallengePage.class);
                 intent.putExtra("challengeId", challengeIds.get(position));
                 startActivity(intent);
             }
         });
 
-
+        return view;
     }
 }

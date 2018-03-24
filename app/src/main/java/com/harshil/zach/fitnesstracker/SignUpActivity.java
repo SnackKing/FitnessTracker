@@ -68,7 +68,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         Firebase.setAndroidContext(this);
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if(user != null){
-            Intent intent = new Intent(getApplicationContext(),MainScreen.class);
+            Intent intent = new Intent(getApplicationContext(),MainAndRunningTabsScreen.class);
             startActivity(intent);
         }
         // Set up the login form.
@@ -147,7 +147,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                         //signup successful
                         Toast.makeText(SignUpActivity.this, "Successfully registered", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(context, MainScreen.class);
+                        Intent intent = new Intent(context, MainAndRunningTabsScreen.class);
                         context.startActivity(intent);
 
                     } else {

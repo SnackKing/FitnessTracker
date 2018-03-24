@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                             editor.commit();
 
 
-                            Intent intent = new Intent(context, MainScreen.class);
+                            Intent intent = new Intent(context, MainAndRunningTabsScreen.class);
                             context.startActivity(intent);
 
                         } else {
