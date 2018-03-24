@@ -101,12 +101,14 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
         mDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = firebaseAuth.getCurrentUser();
         //uDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid()).child("Completed");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 User user = snapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 ArrayList<String> friendIds = new ArrayList<String>();
+                //In case of emergency, break glass
+                // friends = new ArrayList<User>();
                 for (DataSnapshot friendSnapShot : snapshot.child("Users").child(currentUser.getUid()).child("Friends").getChildren()) {
                     //Getting the data from snapshot
                     String id = friendSnapShot.getValue(String.class);
@@ -239,11 +241,7 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                 Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
                 startActivity(homeIntent);
                 break;
-            case R.id.action_Faq:
-                //launch faq activity
-            case R.id.action_about:
-                //launch about activity
-                break;
+
         }
         return super.onOptionsItemSelected(item);
     }

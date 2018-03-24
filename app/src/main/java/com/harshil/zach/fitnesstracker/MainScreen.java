@@ -285,11 +285,7 @@ public class MainScreen extends AppCompatActivity {
                 Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
                 startActivity(homeIntent);
                 break;
-            case R.id.action_Faq:
-                //launch faq activity
-            case R.id.action_about:
-                //launch about activity
-                break;
+
         }
         return super.onOptionsItemSelected(item);
     }

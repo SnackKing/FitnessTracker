@@ -42,7 +42,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Challenge>
         name.setText(currentChallenge.getTitle());
 
         TextView xp = (TextView) listItem.findViewById(R.id.xp);
-        xp.setText(Integer.toString(currentChallenge.getXp()));
+        xp.setText(Integer.toString(currentChallenge.getXp()) + "xp");
         return listItem;
 
 
