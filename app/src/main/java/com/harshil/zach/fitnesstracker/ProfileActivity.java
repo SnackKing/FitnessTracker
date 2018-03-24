@@ -247,7 +247,7 @@ public class ProfileActivity extends AppCompatActivity {
                 email.setText(user.email);
                 rank.setText(Integer.toString(user.getRank()));
                 runRank.setText(Integer.toString(user.getRunRank()));
-                DataSnapshot friends = snapshot.child("friends");
+                DataSnapshot friends = snapshot.child("Friends");
                 int friendCount = 0;
                 for(DataSnapshot current: friends.getChildren()){
                     friendCount++;
@@ -293,11 +293,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
                 startActivity(homeIntent);
                 break;
-            case R.id.action_Faq:
-                //launch faq activity
-            case R.id.action_about:
-                //launch about activity
-                break;
+
 
 
         }

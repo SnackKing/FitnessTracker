@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Welcome to [App Name]"
+                android:text="Welcome to FitnessTracker"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textStyle="bold"

@@ -200,11 +200,7 @@ public class ChallengesActivity extends AppCompatActivity {
                 Intent homeIntent = new Intent(getApplicationContext(),MainAndRunningTabsScreen.class);
                 startActivity(homeIntent);
                 break;
-            case R.id.action_Faq:
-                //launch faq activity
-            case R.id.action_about:
-                //launch about activity
-                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
