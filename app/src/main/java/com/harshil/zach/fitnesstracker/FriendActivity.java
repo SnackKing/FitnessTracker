@@ -238,7 +238,7 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                 startActivity(intent);
                 break;
             case R.id.action_home:
-                Intent homeIntent = new Intent(getApplicationContext(),MainScreen.class);
+                Intent homeIntent = new Intent(getApplicationContext(),MainAndRunningTabsScreen.class);
                 startActivity(homeIntent);
                 break;
 
