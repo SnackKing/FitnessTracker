@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawer_layout"
-    android:fitsSystemWindows="true"
-    tools:context="com.harshil.zach.fitnesstracker.FriendActivity">
+    tools:context="com.harshil.zach.fitnesstracker.RunTracking">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            app:theme="@style/ToolBarStyle"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"/>
+        android:orientation="vertical"
+        >
+
         <ListView
-            android:layout_marginTop="20px"
             android:id="@+id/challengeDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -35,26 +29,15 @@
                 tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/start_button"
+                android:id="@+id/stop_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                app:backgroundTint="@android:color/holo_green_light"
-                app:srcCompat="@drawable/quantum_ic_play_circle_filled_grey600_36" />
+                app:backgroundTint="@android:color/holo_red_dark"
+                app:srcCompat="@drawable/cast_ic_stop_circle_filled_grey600" />
         </FrameLayout>
 
+
     </LinearLayout>
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/nav_drawer"
-        app:headerLayout="@layout/nav_header"/>
-</android.support.v4.widget.DrawerLayout>
 
-
-
-
-
+</android.support.constraint.ConstraintLayout>

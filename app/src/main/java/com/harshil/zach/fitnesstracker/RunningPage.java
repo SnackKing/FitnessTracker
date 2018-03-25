@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,8 +49,8 @@ public class RunningPage extends Fragment {
     int userExp;
     DonutProgress progress;
     List<String> challengeDescriptions = new ArrayList<>();
-    List<Integer> challengeIds = new ArrayList<>();
     ArrayAdapter<String> adapter;
+    List<RunningChallenge> challenges = new ArrayList<>();
 
 
     @Nullable
@@ -76,14 +77,13 @@ public class RunningPage extends Fragment {
                 progress.setDonut_progress(Integer.toString(userExp));
                 progress.setText(Integer.toString(userExp));
 
-                Iterator<DataSnapshot> items = dataSnapshot.child("RunningChallenges").getChildren().iterator();
-                while (items.hasNext()){
-                    DataSnapshot item = items.next();
-                    String des = (String) item.child("Description").getValue();
-                    challengeDescriptions.add(des);
-                    String id = item.child("id").getValue().toString();
-                    Integer challengeId = Integer.valueOf(id);
-                    challengeIds.add(challengeId);
+                challengeDescriptions.clear();
+
+                for (DataSnapshot postSnapshot : dataSnapshot.child("RunningChallenges").getChildren()) {
+                    //Getting the data from snapshot
+                    RunningChallenge challenge = postSnapshot.getValue(RunningChallenge.class);
+                    challenges.add(challenge);
+                    challengeDescriptions.add(challenge.getDescription());
                 }
                 adapter.notifyDataSetChanged();
 
@@ -103,7 +103,7 @@ public class RunningPage extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 Intent intent = new Intent(getActivity(), RunningChallengePage.class);
-                intent.putExtra("challengeId", challengeIds.get(position));
+                intent.putExtra("challenge", challenges.get(position));
                 startActivity(intent);
             }
         });

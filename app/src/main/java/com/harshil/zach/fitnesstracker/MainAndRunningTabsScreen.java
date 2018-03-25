@@ -112,10 +112,6 @@ public class MainAndRunningTabsScreen extends AppCompatActivity {
                 Intent intent = new Intent(this.getApplicationContext(),SignUpActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.action_home:
-                Intent homeIntent = new Intent(this.getApplicationContext(),MainScreen.class);
-                startActivity(homeIntent);
-                break;
         }
         return super.onOptionsItemSelected(item);
     }

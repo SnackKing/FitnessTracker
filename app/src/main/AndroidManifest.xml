@@ -26,12 +26,13 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ChallengesActivity"
-            android:label="FitnessTracker"
+            android:label="Challenges"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".HistoryActivity"
@@ -45,8 +46,9 @@
             android:name=".FriendActivity"
             android:label="Friends"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".RunningChallengePage"></activity>
+        <activity android:name=".RunningChallengePage"
+            android:label="Running Challenge"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -57,8 +59,11 @@
 
         <activity
             android:name=".MainAndRunningTabsScreen"
-            android:label="@string/title_activity_main_and_running_tabs_screen"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="Fitness Tracker"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".RunTracking"
+            android:label = "Running Challenge"
+            ></activity>
     </application>
 
 </manifest>
