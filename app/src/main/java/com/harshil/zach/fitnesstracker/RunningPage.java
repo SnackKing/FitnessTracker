@@ -52,6 +52,10 @@ public class RunningPage extends Fragment {
     List<String> challengeDescriptions = new ArrayList<>();
     ArrayAdapter<String> adapter;
     List<RunningChallenge> challenges = new ArrayList<>();
+    List<Rank> ranks = new ArrayList<>();
+    Rank nextRank;
+    int runRank;
+    int percentage = 0;
 
 
     @Nullable
@@ -67,6 +71,7 @@ public class RunningPage extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         ListView list = view.findViewById(R.id.challengeList);
         final TextView rankDescription = (TextView) view.findViewById(R.id.rank);
+        progress = view.findViewById(R.id.donut_progress);
 
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -75,12 +80,15 @@ public class RunningPage extends Fragment {
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 userExp = user.getRunXp();
-                progress = view.findViewById(R.id.donut_progress);
-                progress.setDonut_progress(Integer.toString(userExp));
-                progress.setText(Integer.toString(userExp));
-                rank = user.getRunRank();
-                rankDescription.setText(Integer.toString(rank));
 
+                runRank = user.getRunRank();
+                ranks.clear();
+                for (DataSnapshot postSnapshot : dataSnapshot.child("Ranks").getChildren()) {
+                    Rank current = postSnapshot.getValue(Rank.class);
+                    ranks.add(current);
+                }
+                setView();
+                rankDescription.setText(Integer.toString(runRank));
                 challengeDescriptions.clear();
 
                 for (DataSnapshot postSnapshot : dataSnapshot.child("RunningChallenges").getChildren()) {
@@ -113,5 +121,25 @@ public class RunningPage extends Fragment {
         });
 
         return view;
+    }
+
+    private void setView(){
+
+        float decimal = 0;
+        float percent = 0;
+        int i = 0;
+        while (i < ranks.size()){
+            if (ranks.get(i).level() == runRank + 1){
+                nextRank = ranks.get(i);
+                decimal = (float)userExp/nextRank.getXp();
+                percent = decimal * 100;
+            }
+            i = i + 1;
+        }
+
+        progress.setDonut_progress(Integer.toString(Math.round(percent)));
+        progress.setText(Integer.toString(userExp));
+
+
     }
 }

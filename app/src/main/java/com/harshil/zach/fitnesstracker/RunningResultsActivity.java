@@ -82,7 +82,6 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         }
         else{
             completed = "You did not complete the challenge!";
-
         }
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -100,7 +99,10 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                     ranks.add(current);
                 }
                 runRank = user.getRunRank();
-                addExperience();
+                if (success){
+                    addExperience();
+                }
+
             }
 
             @Override
@@ -226,7 +228,7 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void addExperience(){
-        if (success){
+
             updatedExp = userExp + challenge.getXp();
             mDatabase.child("Users").child(user.getUid()).child("runXp").setValue(updatedExp);
             int i = 0;
@@ -240,7 +242,7 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 i = i + 1;
             }
 
-        }
+
     }
 
 
