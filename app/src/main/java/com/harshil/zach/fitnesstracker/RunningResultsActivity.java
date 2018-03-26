@@ -57,10 +57,11 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
     private DatabaseReference mDatabase;
     FirebaseUser user;
     int userExp = 0;
+    int updatedExp = 0;
     int runRank;
-    int nextRankLevel;
     List<Rank> ranks = new ArrayList<>();
     Rank nextRank;
+    boolean success = false;
 
 
     @Override
@@ -74,6 +75,16 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         distanceLeft = getIntent().getDoubleExtra("distanceLeft", 0);
         timeLeft = getIntent().getStringExtra("time");
 
+        if (distanceLeft <= 0){
+            completed = "You completed the challenge!";
+            success = true;
+
+        }
+        else{
+            completed = "You did not complete the challenge!";
+
+        }
+
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -84,19 +95,18 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 userExp = user.getRunXp();
-
                 for (DataSnapshot postSnapshot : dataSnapshot.child("Ranks").getChildren()) {
                     Rank current = postSnapshot.getValue(Rank.class);
                     ranks.add(current);
                 }
-
+                runRank = user.getRunRank();
+                addExperience();
             }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                }
-
+            }
 
         });
 
@@ -139,14 +149,6 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 });
 
 
-        if (distanceLeft <= 0){
-            completed = "You completed the challenge!";
-            addExperience();
-        }
-        else{
-            completed = "You did not complete the challenge!";
-
-        }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_container);
         mapFragment.getMapAsync(this);
 
@@ -224,18 +226,20 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void addExperience(){
-        userExp = userExp + challenge.getXp();
-        mDatabase.child("Users").child(user.getUid()).child("runXp").setValue(userExp);
-        int i = 0;
-        while (i < ranks.size()){
-            Rank rank = ranks.get(i);
-            if (rank.level == nextRankLevel){
-                nextRank = rank;
+        if (success){
+            updatedExp = userExp + challenge.getXp();
+            mDatabase.child("Users").child(user.getUid()).child("runXp").setValue(updatedExp);
+            int i = 0;
+            while (i < ranks.size()){
+                if (ranks.get(i).level() == runRank + 1){
+                    nextRank = ranks.get(i);
+                    if (updatedExp > nextRank.getXp()){
+                        mDatabase.child("Users").child(user.getUid()).child("runRank").setValue(runRank+1);
+                    }
+                }
+                i = i + 1;
             }
-            i = i + 1;
-        }
-        if (userExp > nextRank.getXp()){
-            mDatabase.child("Users").child(user.getUid()).child("runRank").setValue(nextRankLevel);
+
         }
     }
 
