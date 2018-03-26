@@ -56,6 +56,9 @@ public class FriendArrayAdapter extends ArrayAdapter<User>
         TextView rank = (TextView) listItem.findViewById(R.id.rank);
         rank.setText("Rank " + Integer.toString(currentFriend.getRank()));
 
+        TextView runRank = listItem.findViewById(R.id.runRank);
+        runRank.setText("Run Rank " + Integer.toString(currentFriend.getRunRank()));
+
         CircleImageView profile = listItem.findViewById(R.id.profile_image);
         String img = currentFriend.getProfile();
         if(!img.equals("")){

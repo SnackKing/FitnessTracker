@@ -8,21 +8,20 @@
     <RelativeLayout
         android:id="@+id/relativeLayout2"
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="96dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_gravity="center"
             android:src="@drawable/profile"
-            app:civ_border_width="2dp"
-            app:civ_border_color="@android:color/white"/>
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp" />
 
         <TextView
             android:id="@+id/name"
@@ -37,8 +36,8 @@
             android:id="@+id/email"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/name"
             android:layout_alignParentEnd="true"
+            android:layout_below="@+id/name"
             android:layout_marginBottom="14dp"
             android:text="Email" />
 
@@ -48,8 +47,18 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="21dp"
             android:text="Rank" />
+
+        <TextView
+            android:id="@+id/runRank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/rank"
+            android:text="RunRank" />
+
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
