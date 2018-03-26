@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class RunningChallenge implements Serializable {
     public String description;
-    public int distance;
+    public double distance;
     public String time;
     public int xp;
     public int id;
@@ -16,7 +16,7 @@ public class RunningChallenge implements Serializable {
     public RunningChallenge(){
 
     }
-    public RunningChallenge(String description, int distance, String time, int xp, int id){
+    public RunningChallenge(String description, double distance, String time, int xp, int id){
         this.description = description;
         this.distance = distance;
         this.time = time;
@@ -27,7 +27,7 @@ public class RunningChallenge implements Serializable {
     public String getDescription(){
         return this.description;
     }
-    public int getDistance(){
+    public double getDistance(){
         return this.distance;
     }
     public String getTime(){

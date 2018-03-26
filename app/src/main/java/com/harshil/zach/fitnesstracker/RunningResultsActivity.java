@@ -1,5 +1,6 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
@@ -28,6 +29,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +53,15 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
     List<String> info = new ArrayList<>();
     ArrayAdapter<String> adapter;
     private DrawerLayout mDrawerLayout;
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference mDatabase;
+    FirebaseUser user;
+    int userExp = 0;
+    int runRank;
+    int nextRankLevel;
+    List<Rank> ranks = new ArrayList<>();
+    Rank nextRank;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +70,38 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
 
         polyPlaces = getIntent().getParcelableArrayListExtra("polyLocations");
         ListView list = (ListView) findViewById(R.id.results);
+        challenge = (RunningChallenge) getIntent().getSerializableExtra("challenge");
+        distanceLeft = getIntent().getDoubleExtra("distanceLeft", 0);
+        timeLeft = getIntent().getStringExtra("time");
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
+                userExp = user.getRunXp();
+
+                for (DataSnapshot postSnapshot : dataSnapshot.child("Ranks").getChildren()) {
+                    Rank current = postSnapshot.getValue(Rank.class);
+                    ranks.add(current);
+                }
+
+            }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+
+
+        });
+
+
+
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -91,19 +139,16 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 });
 
 
-        challenge = (RunningChallenge) getIntent().getSerializableExtra("challenge");
-        distanceLeft = getIntent().getDoubleExtra("distanceLeft", 0);
-        timeLeft = getIntent().getStringExtra("time");
         if (distanceLeft <= 0){
             completed = "You completed the challenge!";
+            addExperience();
         }
         else{
             completed = "You did not complete the challenge!";
+
         }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_container);
         mapFragment.getMapAsync(this);
-
-        int minsTaken = challenge.getTimeMinutes(challenge.getTime()) - challenge.getTimeMinutes(timeLeft);
 
         info.add(completed);
         info.add("Challenge Description: " + challenge.getDescription());
@@ -115,21 +160,40 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
 
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-        polylineOptions.addAll(polyPlaces);
-        polyLine = mMap.addPolyline(polylineOptions);
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        int i = 0;
-        while (i < polyPlaces.size()){
-            builder.include(polyPlaces.get(i));
-            i = i + 1;
+        if (polyPlaces.size() > 10){
+            polylineOptions.addAll(polyPlaces);
+            polyLine = mMap.addPolyline(polylineOptions);
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            int i = 0;
+            while (i < polyPlaces.size()){
+                builder.include(polyPlaces.get(i));
+                i = i + 1;
+            }
+            int padding = 50;
+            LatLngBounds bounds = builder.build();
+            final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            mMap.animateCamera(cu);
         }
-        int padding = 50;
-        LatLngBounds bounds = builder.build();
-        final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        mMap.animateCamera(cu);
+        else{
+            mMap.setMyLocationEnabled(true);
+            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            String provider = locationManager.getBestProvider(criteria, true);
+            Location location = locationManager.getLastKnownLocation(provider);
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            LatLng latLng = new LatLng(latitude, longitude);
+            CameraUpdate center= CameraUpdateFactory.newLatLng(latLng);
+            CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
+            mMap.moveCamera(center);
+            mMap.animateCamera(zoom);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
+
 
     }
 
@@ -158,4 +222,22 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void addExperience(){
+        userExp = userExp + challenge.getXp();
+        mDatabase.child("Users").child(user.getUid()).child("runXp").setValue(userExp);
+        int i = 0;
+        while (i < ranks.size()){
+            Rank rank = ranks.get(i);
+            if (rank.level == nextRankLevel){
+                nextRank = rank;
+            }
+            i = i + 1;
+        }
+        if (userExp > nextRank.getXp()){
+            mDatabase.child("Users").child(user.getUid()).child("runRank").setValue(nextRankLevel);
+        }
+    }
+
+
 }

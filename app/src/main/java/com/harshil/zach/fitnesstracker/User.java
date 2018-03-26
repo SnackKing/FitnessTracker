@@ -14,6 +14,7 @@ public class User {
     public  int xp;
     public int runRank;
     public String profile;
+    public int runXp;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -26,6 +27,7 @@ public class User {
         this.xp = 0;
         this.runRank = 1;
         this.profile = "";
+        this.runXp = 0;
     }
     @Override
     public boolean equals(Object o)
@@ -68,6 +70,9 @@ public class User {
 
     public int xp(){
         return this.xp;
+    }
+    public int getRunXp(){
+        return this.runXp;
     }
 
 }

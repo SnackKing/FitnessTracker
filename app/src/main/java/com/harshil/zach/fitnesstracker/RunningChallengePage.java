@@ -19,6 +19,7 @@ import android.os.Bundle;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.Query;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import android.Manifest;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -136,7 +138,7 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
 
         info.clear();
         String description = challenge.getDescription();
-        String distance = Integer.toString(challenge.getDistance());
+        String distance = Double.toString(challenge.getDistance());
         String time = challenge.getTime();
         String xp = Integer.toString(challenge.getXp());
         info.add("Description: " + description);
@@ -226,6 +228,5 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 }

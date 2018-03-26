@@ -90,7 +90,7 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         challenge = (RunningChallenge) intent.getSerializableExtra("challenge");
         timeRemaining = challenge.getTime();
         ListView list = findViewById(R.id.challengeDescription);
-        distance = (double) challenge.getDistance();
+        distance = challenge.getDistance();
         distanceRemaining = distance;
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_container);
@@ -106,7 +106,7 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
 
         info.clear();
         String description = challenge.getDescription();
-        String distance = Integer.toString(challenge.getDistance());
+        String distance = Double.toString(challenge.getDistance());
         time = challenge.getTime();
         String xp = Integer.toString(challenge.getXp());
         info.add("Distance: " + distance + " miles");
