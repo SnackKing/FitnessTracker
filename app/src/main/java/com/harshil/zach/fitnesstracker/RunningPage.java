@@ -47,6 +47,7 @@ public class RunningPage extends Fragment {
     private DatabaseReference mDatabase;
     FirebaseUser user;
     int userExp;
+    int rank;
     DonutProgress progress;
     List<String> challengeDescriptions = new ArrayList<>();
     ArrayAdapter<String> adapter;
@@ -65,6 +66,7 @@ public class RunningPage extends Fragment {
         user = firebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         ListView list = view.findViewById(R.id.challengeList);
+        final TextView rankDescription = (TextView) view.findViewById(R.id.rank);
 
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -76,6 +78,8 @@ public class RunningPage extends Fragment {
                 progress = view.findViewById(R.id.donut_progress);
                 progress.setDonut_progress(Integer.toString(userExp));
                 progress.setText(Integer.toString(userExp));
+                rank = user.getRunRank();
+                rankDescription.setText(Integer.toString(rank));
 
                 challengeDescriptions.clear();
 

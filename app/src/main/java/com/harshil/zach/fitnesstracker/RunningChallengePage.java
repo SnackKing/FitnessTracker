@@ -2,6 +2,7 @@ package com.harshil.zach.fitnesstracker;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -24,6 +25,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -61,6 +64,7 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
     FloatingActionButton start;
     boolean canClick;
     private DrawerLayout mDrawerLayout;
+
 
 
 
@@ -141,6 +145,7 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
         info.add("XP: " + xp);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, info);
         list.setAdapter(adapter);
+
     }
 
 
@@ -173,6 +178,8 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
             CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
             mMap.moveCamera(center);
             mMap.animateCamera(zoom);
+
+
 
         }
     }

@@ -46,9 +46,10 @@
             android:name=".FriendActivity"
             android:label="Friends"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RunningChallengePage"
+        <activity
+            android:name=".RunningChallengePage"
             android:label="Running Challenge"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -61,9 +62,10 @@
             android:name=".MainAndRunningTabsScreen"
             android:label="Fitness Tracker"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RunTracking"
-            android:label = "Running Challenge"
-            ></activity>
+        <activity
+            android:name=".RunTracking"
+            android:label="Running Challenge" />
+        <activity android:name=".RunningResultsActivity"></activity>
     </application>
 
 </manifest>
