@@ -65,7 +65,11 @@
         <activity
             android:name=".RunTracking"
             android:label="Running Challenge" />
-        <activity android:name=".RunningResultsActivity"></activity>
+        <activity android:name=".RunningResultsActivity"
+            android:label="Results"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>

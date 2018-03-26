@@ -91,8 +91,8 @@ public class MainAndRunningTabsScreen extends AppCompatActivity {
 
     public void setupViewPager(ViewPager viewPager){
         sectionsPageAdapter adapter = new sectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MainScreen(), "MainScreen");
-        adapter.addFragment(new RunningPage(), "RunningPage");
+        adapter.addFragment(new MainScreen(), "Main");
+        adapter.addFragment(new RunningPage(), "Running Challenges");
         viewPager.setAdapter(adapter);
     }
 
