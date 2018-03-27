@@ -101,6 +101,7 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 runRank = user.getRunRank();
                 if (success){
                     addExperience();
+                    success = false;
                 }
 
             }
