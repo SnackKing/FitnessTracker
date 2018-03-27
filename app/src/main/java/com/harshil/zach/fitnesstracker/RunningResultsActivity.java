@@ -62,6 +62,7 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
     List<Rank> ranks = new ArrayList<>();
     Rank nextRank;
     boolean success = false;
+    boolean keepGoing = true;
 
 
     @Override
@@ -74,48 +75,6 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         challenge = (RunningChallenge) getIntent().getSerializableExtra("challenge");
         distanceLeft = getIntent().getDoubleExtra("distanceLeft", 0);
         timeLeft = getIntent().getStringExtra("time");
-
-        if (distanceLeft <= 0){
-            completed = "You completed the challenge!";
-            success = true;
-
-        }
-        else{
-            completed = "You did not complete the challenge!";
-        }
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        user = firebaseAuth.getCurrentUser();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
-                userExp = user.getRunXp();
-                for (DataSnapshot postSnapshot : dataSnapshot.child("Ranks").getChildren()) {
-                    Rank current = postSnapshot.getValue(Rank.class);
-                    ranks.add(current);
-                }
-                runRank = user.getRunRank();
-                if (success){
-                    addExperience();
-                    success = false;
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-
-        });
-
-
-
-
         mDrawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -151,9 +110,47 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                     }
                 });
 
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_container);
         mapFragment.getMapAsync(this);
+
+
+        if (distanceLeft <= 0){
+            completed = "You completed the challenge!";
+            success = true;
+
+        }
+        else{
+            completed = "You did not complete the challenge!";
+        }
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
+                userExp = user.getRunXp();
+                for (DataSnapshot postSnapshot : dataSnapshot.child("Ranks").getChildren()) {
+                    Rank current = postSnapshot.getValue(Rank.class);
+                    ranks.add(current);
+                }
+                runRank = user.getRunRank();
+                if (success && keepGoing){
+                    keepGoing = false;
+                    addExperience();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
 
         info.add(completed);
         info.add("Challenge Description: " + challenge.getDescription());
@@ -161,7 +158,6 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         info.add("Distance Remaining: " + Double.toString(distanceLeft) + " miles");
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, info);
         list.setAdapter(adapter);
-
 
     }
 
@@ -229,7 +225,6 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void addExperience(){
-
             updatedExp = userExp + challenge.getXp();
             mDatabase.child("Users").child(user.getUid()).child("runXp").setValue(updatedExp);
             int i = 0;
@@ -242,9 +237,5 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 }
                 i = i + 1;
             }
-
-
     }
-
-
 }

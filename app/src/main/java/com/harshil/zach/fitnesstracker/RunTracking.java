@@ -68,7 +68,6 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     public static final String TAG = "TAG";
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
-    int locationNumber = 0;
 
     Location originalLocation;
     double distance;
@@ -79,6 +78,9 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     double distanceRemaining;
     String timeRemaining;
     ArrayList<LatLng> polyLocations = new ArrayList<>();
+    CountDownTimer runTimer;
+    CountDownTimer startTimer;
+    LocationCallback locationCallback;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -134,14 +136,14 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         settingsClient.checkLocationSettings(locationSettingsRequest);
 
         // new Google API SDK v11 uses getFusedLocationProviderClient(this)
-        getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        // do work here
-                        onLocationChanged(locationResult.getLastLocation());
-                    }
-                },
-                Looper.myLooper());
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                // do work here
+                onLocationChanged(locationResult.getLastLocation());
+            }
+        };
+        getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, locationCallback, Looper.myLooper());
 
 
     }
@@ -165,7 +167,7 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(17);
         mMap.moveCamera(center);
         mMap.animateCamera(zoom);
-        new CountDownTimer(10000, 1000){
+        startTimer = new CountDownTimer(10000, 1000){
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -196,7 +198,7 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         long secToMilli = secs * 1000;
 
 
-        new CountDownTimer(minToMilli + secToMilli, 1000){
+        runTimer = new CountDownTimer(minToMilli + secToMilli, 1000){
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -293,25 +295,28 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         super.onResume();
         mGoogleApiClient.connect();
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
-    }
 
     @Override
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
     }
+
+
     private void stopLocationUpdates() {
+        getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         mGoogleApiClient.disconnect();
+
     }
 
     private void endRunTracking(){
         stopLocationUpdates();
+        if (runTimer != null){
+            runTimer.cancel();
+        }
+        if (startTimer != null){
+            startTimer.cancel();
+        }
         Intent intent = new Intent(RunTracking.this, RunningResultsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("time", timeRemaining);
@@ -321,6 +326,6 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         b.putParcelableArrayList("polyLocations", polyLocations);
         intent.putExtras(b);
         startActivity(intent);
-        finish();
+        RunTracking.this.finish();
     }
 }
