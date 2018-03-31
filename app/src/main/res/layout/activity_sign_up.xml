@@ -12,6 +12,9 @@
     tools:context="com.harshil.zach.fitnesstracker.SignUpActivity">
 
     <!-- Sign up progress -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
         <LinearLayout
@@ -22,9 +25,10 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/logo" />
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/logo_new" />
 
             <TextView
                 android:id="@+id/SignUpHeader"
@@ -99,5 +103,7 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
