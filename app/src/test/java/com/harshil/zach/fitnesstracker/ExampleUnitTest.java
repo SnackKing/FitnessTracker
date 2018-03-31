@@ -11,7 +11,17 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+    public void validEmail() throws Exception {
+        boolean isValid = SignUpActivity.isEmailValid("allegretti.3@osu.edu");
+        assertTrue(isValid);
+    }
+    @Test
+    public  void invalidEmailMissingAt() throws Exception{
+        boolean isValid = SignUpActivity.isEmailValid("allegretti.3osu.edu");
+        assertFalse(isValid);
+    }
+    @Test
+    public  void invalidEmailInvalidChars() throws Exception{
+        boolean isValid = SignUpActivity.isEmailValid("#%@*((*");
     }
 }
