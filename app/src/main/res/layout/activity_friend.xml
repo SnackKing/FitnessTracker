@@ -20,6 +20,7 @@
             android:background="?attr/colorPrimary"/>
         <SearchView
             android:id="@+id/findFriend"
+            android:queryHint="Search for new friends"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
         <ListView

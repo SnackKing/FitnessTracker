@@ -145,7 +145,7 @@ public class MainScreen extends Fragment {
         friends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToFriendsPage = new Intent(getActivity(), ProfileActivity.class);
+                Intent goToFriendsPage = new Intent(getActivity(), FriendActivity.class);
                 startActivity(goToFriendsPage);
             }
         });
