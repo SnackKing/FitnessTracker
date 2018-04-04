@@ -184,8 +184,9 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                         rank.setText(Integer.toString(foundFriend.getRank()));
                         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-
+                                String userAltEmail = user.getEmail().replace('.',',');
                                 mDatabase.child("Users").child(user.getUid()).child("Friends").child(adjustedQuery).setValue(newFriendId);
+                                mDatabase.child("Users").child(newFriendId).child("FriendedBy").child(userAltEmail).setValue(user.getUid());
                                 friends.add(foundFriend);
                                 adapter.notifyDataSetChanged();
                                 dialog.dismiss();

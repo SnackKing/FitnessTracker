@@ -3,6 +3,8 @@ package com.harshil.zach.fitnesstracker;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -63,6 +65,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Running onCreate");
         setContentView(R.layout.activity_sign_up);
+        ConnectivityManager cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if(!isConnected){
+            //start new activity for not having connection
+        }
+
         //create instance of firebase
         firebaseAuth = FirebaseAuth.getInstance();
         Firebase.setAndroidContext(this);

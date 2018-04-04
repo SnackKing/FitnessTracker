@@ -18,9 +18,13 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.Circle;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -31,7 +35,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FriendArrayAdapter extends ArrayAdapter<User>
 {
     private Context mContext;
-    List<User> friendList;
+    List<User> friendList = new ArrayList<>();
 
 
     public FriendArrayAdapter(Context context, List<User> list)
@@ -84,9 +88,24 @@ public class FriendArrayAdapter extends ArrayAdapter<User>
 
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                String altEmail = currentFriend.email.replace('.',',');
+                                final String altEmail = currentFriend.email.replace('.',',');
+                                final String userAltEmail = user.getEmail().replace('.',',');
                                 DatabaseReference node = FirebaseDatabase.getInstance().getReference().getRoot().child("Users").child(user.getUid()).child("Friends").child(altEmail);
                                 node.setValue(null);
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().getRoot().child("email_uid");
+                                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        String friendId = dataSnapshot.child(altEmail).getValue(String.class);
+                                        FirebaseDatabase.getInstance().getReference().getRoot().child("Users").child(friendId).child("FriendedBy").child(userAltEmail).setValue(null);
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {}
+                                });
+
+
+
+
                                 friendList.remove(position);
                                 Toast.makeText(getContext(),"Friend Removed",Toast.LENGTH_SHORT).show();
                                 notifyDataSetChanged();

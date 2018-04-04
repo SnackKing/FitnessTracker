@@ -129,6 +129,8 @@ public class ProfileActivity extends AppCompatActivity {
                                 final String newEmailString = newEmail.getText().toString();
                                 if(isEmailValid(newEmailString)){
                                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    String oldEmail = user.getEmail();
+                                    final String altOldEmail = oldEmail.replace('.',',');
                                     SharedPreferences sharedPref= getSharedPreferences("auth", 0);
                                     String password = sharedPref.getString("password", "");
                                     AuthCredential credential = EmailAuthProvider
@@ -148,10 +150,43 @@ public class ProfileActivity extends AppCompatActivity {
                                                                         Log.d("ProfileActivity", "User email address updated.");
                                                                         email.setText(newEmailString);
                                                                         mDatabase.child("email").setValue(newEmailString);
-                                                                        String formattedEmail = newEmailString.replace('.',',');
+                                                                        final String formattedEmail = newEmailString.replace('.',',');
                                                                         //UPDATE EMAIL_UID TABLE******
-                                                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                                        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                                        //remove old email from email_uid table
+                                                                        FirebaseDatabase.getInstance().getReference().child("email_uid").child(altOldEmail).setValue(null);
                                                                         FirebaseDatabase.getInstance().getReference().child("email_uid").child(formattedEmail).setValue(user.getUid());
+                                                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
+                                                                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                            @Override
+                                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                                //this is pretty gross, but we need to update all of the current user's friend's references to reflect the new email
+                                                                                for(DataSnapshot currentFriend: dataSnapshot.child("FriendedBy").getChildren()){
+                                                                                    String email = currentFriend.getKey();
+                                                                                    String friendId = currentFriend.getValue(String.class);
+                                                                                    String altEmail = email.replace(',','.');
+                                                                                    String userAltEmail = user.getEmail().replace('.',',');
+                                                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("Friends").child(altOldEmail).setValue(null);
+                                                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("Friends").child(formattedEmail).setValue(user.getUid());
+                                                                                }
+                                                                                //update friendedBy references for all users
+                                                                                for(DataSnapshot currentFriend: dataSnapshot.child("Friends").getChildren()){
+                                                                                    String email = currentFriend.getKey();
+                                                                                    String friendId = currentFriend.getValue(String.class);
+                                                                                    String altEmail = email.replace(',','.');
+                                                                                    String userAltEmail = user.getEmail().replace('.',',');
+                                                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("FriendedBy").child(altOldEmail).setValue(null);
+                                                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("FriendedBy").child(formattedEmail).setValue(user.getUid());
+
+                                                                                }
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onCancelled(DatabaseError databaseError) {
+                                                                                Log.d("UPDATEEMAIL",databaseError.getMessage());
+
+                                                                            }
+                                                                        });
                                                                         dialog.dismiss();
                                                                     }
                                                                     else{
