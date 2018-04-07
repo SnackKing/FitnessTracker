@@ -73,33 +73,38 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 activeNetwork.isConnectedOrConnecting();
         if(!isConnected){
             //start new activity for not having connection
-        }
-
-        //create instance of firebase
-        firebaseAuth = FirebaseAuth.getInstance();
-        Firebase.setAndroidContext(this);
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if(user != null){
-            Intent intent = new Intent(getApplicationContext(),MainAndRunningTabsScreen.class);
+            Intent intent = new Intent(SignUpActivity.this,NoConnectionActivity.class);
             startActivity(intent);
         }
-        // Set up the login form.
-        mEmailView = (EditText)findViewById(R.id.email);
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mNameView = (EditText) findViewById(R.id.name);
+        else {
 
-        Button mEmailSignUpButton = (Button) findViewById(R.id.email_sign_up_button);
-        Button goToSignIn = (Button) findViewById(R.id.goToSignIn);
-        goToSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(),LoginActivity.class);
+
+            //create instance of firebase
+            firebaseAuth = FirebaseAuth.getInstance();
+            Firebase.setAndroidContext(this);
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Intent intent = new Intent(getApplicationContext(), MainAndRunningTabsScreen.class);
                 startActivity(intent);
             }
-        });
+            // Set up the login form.
+            mEmailView = (EditText) findViewById(R.id.email);
+            mPasswordView = (EditText) findViewById(R.id.password);
+            mNameView = (EditText) findViewById(R.id.name);
 
-        //  mLoginFormView = findViewById(R.id.login_form);
-        mEmailSignUpButton.setOnClickListener(this);
+            Button mEmailSignUpButton = (Button) findViewById(R.id.email_sign_up_button);
+            Button goToSignIn = (Button) findViewById(R.id.goToSignIn);
+            goToSignIn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(view.getContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            //  mLoginFormView = findViewById(R.id.login_form);
+            mEmailSignUpButton.setOnClickListener(this);
+        }
     }
     @Override
     public void onClick(View view) {

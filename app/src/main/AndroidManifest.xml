@@ -23,9 +23,7 @@
         <activity
             android:name=".SignUpActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ChallengesActivity"
             android:label="Challenges"
@@ -64,13 +62,21 @@
         <activity
             android:name=".RunningResultsActivity"
             android:label="Results"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".SplashActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".NoConnectionActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.AppCompat.Light.DarkActionBar">
+
+
         </activity>
     </application>
 
