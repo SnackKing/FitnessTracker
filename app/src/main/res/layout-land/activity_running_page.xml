@@ -9,6 +9,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
@@ -16,7 +19,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingTop="30dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="100dp"
+            android:paddingLeft="100dp"
             android:text="RANK"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textStyle="bold"
@@ -35,11 +40,16 @@
                 app:donut_text_color="@android:color/black"
                 app:donut_circle_starting_degree="270"
                 app:donut_finished_color="@color/colorAccent"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"/>
          </RelativeLayout>
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingTop="15dp"
@@ -49,10 +59,10 @@
 
 
         <ListView
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/challengeList"/>
-
+        </LinearLayout>
 
     </LinearLayout>
 
