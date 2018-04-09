@@ -81,6 +81,7 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     CountDownTimer runTimer;
     CountDownTimer startTimer;
     LocationCallback locationCallback;
+    LocationManager locationManager;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -154,19 +155,24 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        LatLng latLng = new LatLng(latitude, longitude);
-        CameraUpdate center= CameraUpdateFactory.newLatLng(latLng);
-        CameraUpdate zoom=CameraUpdateFactory.zoomTo(17);
-        mMap.moveCamera(center);
-        mMap.animateCamera(zoom);
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            Criteria criteria = new Criteria();
+            String provider = locationManager.getBestProvider(criteria, true);
+            Location location = locationManager.getLastKnownLocation(provider);
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                LatLng latLng = new LatLng(latitude, longitude);
+                CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
+                CameraUpdate zoom = CameraUpdateFactory.zoomTo(17);
+                mMap.moveCamera(center);
+                mMap.animateCamera(zoom);
+            }
+        }
         startTimer = new CountDownTimer(10000, 1000){
 
             @Override
@@ -213,6 +219,10 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
                     info.set(1, "Time remaining: " + timeRemaining);
                 }
                 adapter.notifyDataSetChanged();
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    Toast.makeText(RunTracking.this, "GPS Connection lost!", Toast.LENGTH_LONG).show();
+                    endRunTracking();
+                }
             }
 
             @Override
@@ -242,32 +252,39 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     private void handleNewLocation(Location location) {
         Log.d(TAG, location.toString());
 
-        double currentLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-        CameraUpdate center= CameraUpdateFactory.newLatLng(latLng);
-        CameraUpdate zoom=CameraUpdateFactory.zoomTo(17);
-        mMap.moveCamera(center);
-        mMap.animateCamera(zoom);
-        polyLineOptions.add(latLng);
-        polyLine = mMap.addPolyline(polyLineOptions);
-        polyLocations.add(latLng);
+       if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+           if (location != null) {
+               double currentLatitude = location.getLatitude();
+               double currentLongitude = location.getLongitude();
+               LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+               CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
+               CameraUpdate zoom = CameraUpdateFactory.zoomTo(17);
+               mMap.moveCamera(center);
+               mMap.animateCamera(zoom);
+               polyLineOptions.add(latLng);
+               polyLine = mMap.addPolyline(polyLineOptions);
+               polyLocations.add(latLng);
 
-        if (originalLocation!=null){
-            distanceTraveled = distanceTraveled + location.distanceTo(originalLocation);
-            originalLocation = location;
-            distanceInMiles = distanceTraveled * 0.00062137;
-            distanceRemaining = distance - distanceInMiles;
-            distanceRemaining = Math.round(distanceRemaining * 100.0)/100.0;
-            if (distanceRemaining <= 0){
-                distanceRemaining = 0.00;
-                endRunTracking();
-            }
-            info.set(0, "Distance Remaining: " + Double.toString(distanceRemaining));
-            adapter.notifyDataSetChanged();
+               if (originalLocation != null) {
+                   distanceTraveled = distanceTraveled + location.distanceTo(originalLocation);
+                   originalLocation = location;
+                   distanceInMiles = distanceTraveled * 0.00062137;
+                   distanceRemaining = distance - distanceInMiles;
+                   distanceRemaining = Math.round(distanceRemaining * 100.0) / 100.0;
+                   if (distanceRemaining <= 0) {
+                       distanceRemaining = 0.00;
+                       endRunTracking();
+                   }
+                   info.set(0, "Distance Remaining: " + Double.toString(distanceRemaining));
+                   adapter.notifyDataSetChanged();
 
-        }
-
+               }
+           }
+       }
+       else{
+           Toast.makeText(this, "GPS Connection Lost!", Toast.LENGTH_LONG).show();
+           endRunTracking();
+       }
     }
 
     @Override

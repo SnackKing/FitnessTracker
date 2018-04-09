@@ -168,20 +168,23 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
         } else if (mMap != null) {
             // Access to the location has been granted to the app.
             canClick = true;
-            mMap.setMyLocationEnabled(true);
+
             LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            String provider = locationManager.getBestProvider(criteria, true);
-            Location location = locationManager.getLastKnownLocation(provider);
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-            LatLng latLng = new LatLng(latitude, longitude);
-            CameraUpdate center= CameraUpdateFactory.newLatLng(latLng);
-            CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
-            mMap.moveCamera(center);
-            mMap.animateCamera(zoom);
-
-
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mMap.setMyLocationEnabled(true);
+                Criteria criteria = new Criteria();
+                String provider = locationManager.getBestProvider(criteria, true);
+                Location location = locationManager.getLastKnownLocation(provider);
+                if (location != null) {
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
+                    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+                    mMap.moveCamera(center);
+                    mMap.animateCamera(zoom);
+                }
+            }
 
         }
     }
