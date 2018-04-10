@@ -58,11 +58,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RunTracking"
-            android:label="Running Challenge" />
+            android:label="Running Challenge"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".RunningResultsActivity"
             android:label="Results"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
