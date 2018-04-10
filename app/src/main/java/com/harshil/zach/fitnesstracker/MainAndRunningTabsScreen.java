@@ -1,6 +1,7 @@
 package com.harshil.zach.fitnesstracker;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +26,12 @@ import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainAndRunningTabsScreen extends AppCompatActivity {
@@ -109,8 +116,17 @@ public class MainAndRunningTabsScreen extends AppCompatActivity {
                 return true;
             case R.id.action_sign_out:
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(this.getApplicationContext(),SignUpActivity.class);
-                startActivity(intent);
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).requestEmail().build();
+                GoogleSignInClient mAccount = GoogleSignIn.getClient(this,gso);
+                mAccount.signOut()
+                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+
                 break;
         }
         return super.onOptionsItemSelected(item);
