@@ -93,7 +93,10 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                         }
                         else if(id == R.id.nav_friends){
                             //Do nothing
-
+                        }
+                        else if(id == R.id.history){
+                            Intent intent = new Intent(FriendActivity.this,HistoryActivity.class);
+                            startActivity(intent);
                         }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
@@ -193,6 +196,7 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                                 String userAltEmail = user.getEmail().replace('.',',');
                                 mDatabase.child("Users").child(user.getUid()).child("Friends").child(adjustedQuery).setValue(newFriendId);
                                 mDatabase.child("Users").child(newFriendId).child("FriendedBy").child(userAltEmail).setValue(user.getUid());
+                                mDatabase.child("Users").child(newFriendId).child("Updates").child("latest").setValue(user.getEmail() + " added you as a friend!");
                                 friends.add(foundFriend);
                                 adapter.notifyDataSetChanged();
                                 dialog.dismiss();

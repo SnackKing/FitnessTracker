@@ -266,6 +266,10 @@ public class ProfileActivity extends AppCompatActivity {
                             Intent intent = new Intent(ProfileActivity.this,FriendActivity.class);
                             startActivity(intent);
                         }
+                        else if(id == R.id.history){
+                            Intent intent = new Intent(ProfileActivity.this,HistoryActivity.class);
+                            startActivity(intent);
+                        }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
 

@@ -205,7 +205,7 @@ public class MainScreen extends Fragment {
                         challenges.add(currentChallenge);
                     }
                 }
-                for(DataSnapshot postSnapshot: dataSnapshot.child("Users").child(currentUser.getUid()).child("Friends").getChildren()){
+                for(DataSnapshot postSnapshot: dataSnapshot.child("Users").child(currentUser.getUid()).child("FriendedBy").getChildren()){
                     String friendId = postSnapshot.getValue(String.class);
                     friendIds.add(friendId);
                 }
@@ -233,9 +233,18 @@ public class MainScreen extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+//        AlarmReceiver alarm = new AlarmReceiver();
+//        alarm.setAlarm(getContext());
         if(dataRead) {
             readData();
         }
+        getLastCheckedSteps();
+        Calendar calendar=Calendar.getInstance();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        //calendar.add(Calendar.DAY_OF_YEAR, -7);
+        String formattedDate = format1.format(calendar.getTime());
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Users").child(user.getUid()).child("History").child(formattedDate).setValue(lastCheckedSteps);
     }
 
     @Override
@@ -254,6 +263,32 @@ public class MainScreen extends Fragment {
         // To create a subscription, invoke the Recording API. As soon as the subscription is
         // active, fitness data will start recording.
         Fitness.getRecordingClient(getActivity(), GoogleSignIn.getLastSignedInAccount(view.getContext()))
+                .subscribe(DataType.AGGREGATE_STEP_COUNT_DELTA)
+                .addOnCompleteListener(
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.i(TAG, "Successfully subscribed!");
+                                } else {
+                                    Log.w(TAG, "There was a problem subscribing.", task.getException());
+                                }
+                            }
+                        });
+        Fitness.getRecordingClient(getActivity(), GoogleSignIn.getLastSignedInAccount(view.getContext()))
+                .subscribe(DataType.TYPE_STEP_COUNT_DELTA)
+                .addOnCompleteListener(
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.i(TAG, "Successfully subscribed!");
+                                } else {
+                                    Log.w(TAG, "There was a problem subscribing.", task.getException());
+                                }
+                            }
+                        });
+        Fitness.getRecordingClient(getActivity(), GoogleSignIn.getLastSignedInAccount(view.getContext()))
                 .subscribe(DataType.TYPE_STEP_COUNT_CUMULATIVE)
                 .addOnCompleteListener(
                         new OnCompleteListener<Void>() {
@@ -266,6 +301,7 @@ public class MainScreen extends Fragment {
                                 }
                             }
                         });
+
     }
 
     /**
@@ -306,31 +342,8 @@ public class MainScreen extends Fragment {
      * The total number of steps for the day
      */
     private void addExperience(final long total){
-        //date format for checking if two events occured on different days
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-        //get day of last check in
-        SharedPreferences sharedPref= getActivity().getSharedPreferences("mypref", 0);
-        lastCheckedSteps = sharedPref.getLong("lastChecked", 0);
-        String datePlaced = sharedPref.getString("datePlaced","");
-        Date strDate = new Date();
-        Date now = null;
-        String nowString = sdf.format(new Date());
-        if(datePlaced.equals("")){
-            datePlaced = sdf.format(new Date());
-        }
-        //convert dates to simple date format
-            try {
-                strDate = sdf.parse(datePlaced);
-                now = sdf.parse(nowString);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                strDate = new Date();
-            }
-
-        //last time steps were checked in was yesterday. Reset counter
-        if (now.after(strDate)) {
-            lastCheckedSteps = 0;
-        }
+        getLastCheckedSteps();
         //subtract different in steps to prevent duplicate xp awards
         int exp = (int) total - (int)lastCheckedSteps;
         //currently 100 steps is 1 xp
@@ -341,6 +354,7 @@ public class MainScreen extends Fragment {
         calculatePercent();
         Date c = Calendar.getInstance().getTime();
         String formattedDate = sdf.format(c);
+        SharedPreferences sharedPref= getActivity().getSharedPreferences("mypref", 0);
         //update counter for next check in
         SharedPreferences.Editor editor= sharedPref.edit();
         editor.putLong("lastChecked", total);
@@ -431,6 +445,33 @@ public class MainScreen extends Fragment {
             mDatabase.child("Users").child(userId).child("Updates").child("latest").setValue(notification);
         }
     }
+    public void getLastCheckedSteps(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        //get day of last check in
+        SharedPreferences sharedPref= getActivity().getSharedPreferences("mypref", 0);
+        lastCheckedSteps = sharedPref.getLong("lastChecked", 0);
+        String datePlaced = sharedPref.getString("datePlaced","");
+        Date strDate = new Date();
+        Date now = null;
+        String nowString = sdf.format(new Date());
+        if(datePlaced.equals("")){
+            datePlaced = sdf.format(new Date());
+        }
+        //convert dates to simple date format
+        try {
+            strDate = sdf.parse(datePlaced);
+            now = sdf.parse(nowString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            strDate = new Date();
+        }
+
+        //last time steps were checked in was yesterday. Reset counter
+        if (now.after(strDate)) {
+            lastCheckedSteps = 0;
+        }
+    }
+
 
 
 

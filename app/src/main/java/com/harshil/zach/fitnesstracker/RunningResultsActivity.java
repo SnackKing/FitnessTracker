@@ -99,8 +99,12 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                             startActivity(intent);
                         }
                         else if(id == R.id.nav_friends){
-                            //Do nothing
-
+                            Intent intent = new Intent(RunningResultsActivity.this, HistoryActivity.class);
+                            startActivity(intent);
+                        }
+                        else if(id == R.id.history){
+                            Intent intent = new Intent(RunningResultsActivity.this,HistoryActivity.class);
+                            startActivity(intent);
                         }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();

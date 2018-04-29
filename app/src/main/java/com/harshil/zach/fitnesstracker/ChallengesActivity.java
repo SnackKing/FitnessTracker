@@ -94,6 +94,10 @@ public class ChallengesActivity extends AppCompatActivity {
                             Intent intent = new Intent(ChallengesActivity.this,FriendActivity.class);
                             startActivity(intent);
                         }
+                        else if(id == R.id.history){
+                            Intent intent = new Intent(ChallengesActivity.this,HistoryActivity.class);
+                            startActivity(intent);
+                        }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
 

@@ -103,8 +103,12 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
                             startActivity(intent);
                         }
                         else if(id == R.id.nav_friends){
-                            //Do nothing
-
+                            Intent intent = new Intent(RunningChallengePage.this, FriendActivity.class);
+                            startActivity(intent);
+                        }
+                        else if(id == R.id.history){
+                            Intent intent = new Intent(RunningChallengePage.this,HistoryActivity.class);
+                            startActivity(intent);
                         }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();

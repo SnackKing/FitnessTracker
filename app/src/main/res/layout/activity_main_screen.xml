@@ -156,7 +156,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="Ann just reached rank 4!" />
+                    android:text="Checking for updates" />
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
