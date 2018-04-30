@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -77,6 +78,8 @@ public class HistoryActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     FirebaseAuth firebaseAuth;
     DatabaseReference mDatabase;
+    TextView totalSteps;
+    TextView averageSteps;
 
 
 
@@ -84,6 +87,8 @@ public class HistoryActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        totalSteps = findViewById(R.id.totalSteps);
+        averageSteps = findViewById(R.id.averageSteps);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -122,11 +127,13 @@ public class HistoryActivity extends AppCompatActivity
         GraphView graph = (GraphView) findViewById(R.id.weekGraph);
          series = new BarGraphSeries<DataPoint>();
         series.setSpacing(20);
-        series.setColor(Color.RED);
+
+        series.setColor(Color.parseColor("#bb0000"));
 
         graph.addSeries(series);
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
         graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 3 because of the space
+        graph.setTitle("Last 7 Days");
 
 // set manual x bounds to have nice steps
         Calendar calendar = Calendar.getInstance();
@@ -156,15 +163,12 @@ public class HistoryActivity extends AppCompatActivity
         graph.getGridLabelRenderer().setHumanRounding(false);
         graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
         graph.getGridLabelRenderer().setVerticalAxisTitle("Steps");
+        graph.getGridLabelRenderer().setPadding(32);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-
-
-
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -185,9 +189,25 @@ public class HistoryActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                 }
+                User user = snapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
+                totalSteps.setText("Cumulative Steps Taken: " + Integer.toString(user.totalSteps()));
+                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                Date accountCreationDate = null;
+                try {
+                    accountCreationDate = format1.parse(user.signUpDate());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Date today = Calendar.getInstance().getTime();
+                long diff = accountCreationDate.getTime() - today.getTime();
+                int accountAge = (int) Math.abs(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
 
-
-
+                if(accountAge == 0){
+                    averageSteps.setText("Average Steps/Day: " + Integer.toString(user.totalSteps()));
+                }
+                else{
+                    averageSteps.setText("Average Steps/Day: " + Integer.toString(user.totalSteps()/accountAge));
+                }
             }
 
             @Override
@@ -215,12 +235,6 @@ public class HistoryActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.history, menu);
-        return true;
-    }
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -305,6 +319,12 @@ public class HistoryActivity extends AppCompatActivity
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
     }
 
 

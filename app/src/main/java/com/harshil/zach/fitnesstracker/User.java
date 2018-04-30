@@ -3,6 +3,11 @@ package com.harshil.zach.fitnesstracker;
 import android.media.Image;
 import android.net.Uri;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by Zach on 2/23/2018.
  */
@@ -15,6 +20,8 @@ public class User {
     public int runRank;
     public String profile;
     public int runXp;
+    public int totalSteps;
+    public String signUpDate;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -28,6 +35,11 @@ public class User {
         this.runRank = 1;
         this.profile = "";
         this.runXp = 0;
+        this.totalSteps = 0;
+        Calendar calendar=Calendar.getInstance();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = format1.format(calendar.getTime());
+        this.signUpDate = formattedDate;
     }
     @Override
     public boolean equals(Object o)
@@ -67,12 +79,13 @@ public class User {
         return this.runRank;
     }
     public String getProfile(){return this.profile;}
-
     public int xp(){
         return this.xp;
     }
     public int getRunXp(){
         return this.runXp;
     }
+    public int totalSteps(){return this.totalSteps; };
+    public String signUpDate(){return this.signUpDate; };
 
 }

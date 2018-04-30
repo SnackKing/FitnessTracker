@@ -89,6 +89,7 @@ public class MainScreen extends Fragment {
     int userExp;
     long lastCheckedSteps;
     int userRank;
+    int totalSteps;
     DonutProgress progress;
     TextView rank;
     ArrayList<Rank> ranks;
@@ -185,6 +186,7 @@ public class MainScreen extends Fragment {
                 userName = user.getName();
                 userExp = user.xp();
                 userRank = user.getRank();
+                totalSteps = user.totalSteps();
                 rank.setText(Integer.toString(userRank));
                 //get list of completed challenges
                 ArrayList<Integer> completed = new ArrayList<>();
@@ -346,10 +348,13 @@ public class MainScreen extends Fragment {
         getLastCheckedSteps();
         //subtract different in steps to prevent duplicate xp awards
         int exp = (int) total - (int)lastCheckedSteps;
+        mDatabase.child("Users").child(user.getUid()).child("totalSteps").setValue(totalSteps + exp);
+        totalSteps += exp;
         //currently 100 steps is 1 xp
         exp = exp/100;
         mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
         userExp += exp;
+
         //update UI and potentially rank
         calculatePercent();
         Date c = Calendar.getInstance().getTime();
