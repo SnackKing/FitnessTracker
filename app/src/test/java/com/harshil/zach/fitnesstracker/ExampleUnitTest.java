@@ -1,5 +1,11 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.SystemClock;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -21,7 +27,11 @@ public class ExampleUnitTest {
         assertFalse(isValid);
     }
     @Test
-    public  void invalidEmailInvalidChars() throws Exception{
+    public void invalidEmailInvalidChars() throws Exception{
         boolean isValid = SignUpActivity.isEmailValid("#%@*((*");
+    }
+    @Test
+    public void testBroadcastReceiverSignal() throws Exception{
+
     }
 }

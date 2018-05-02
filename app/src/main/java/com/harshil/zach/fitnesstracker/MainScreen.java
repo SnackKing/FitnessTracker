@@ -1,10 +1,14 @@
 package com.harshil.zach.fitnesstracker;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -39,6 +43,7 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.OnDataPointListener;
+import com.google.android.gms.nearby.messages.internal.Update;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -240,6 +245,15 @@ public class MainScreen extends Fragment {
         if(dataRead) {
             readData();
         }
+        Intent intent = new Intent(getContext(), AlarmReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, 0);
+        AlarmManager am =( AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        if (am!= null) {
+            am.cancel(alarmIntent);
+        }
+        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                500, alarmIntent);
         getLastCheckedSteps();
         Calendar calendar=Calendar.getInstance();
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");

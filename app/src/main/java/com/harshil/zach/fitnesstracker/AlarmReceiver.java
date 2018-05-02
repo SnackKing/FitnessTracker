@@ -5,6 +5,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -15,8 +18,16 @@ import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataUpdateRequest;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -26,55 +37,59 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class AlarmReceiver extends BroadcastReceiver {
+    final String TAG = "Receiver";
+    public static boolean testFlag = false;
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "HELLO", Toast.LENGTH_LONG).show();
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        cal.add(Calendar.MINUTE, 0);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.MINUTE, -50);
-        long startTime = cal.getTimeInMillis();
+    public void onReceive(final Context context, Intent intent) {
+        Toast.makeText(context, "Pushing Data...", Toast.LENGTH_LONG).show();
+        String action = intent.getAction();
+        if(action != null && action.equals("android.intent.action.BOOT_COMPLETED")){
+            Log.i(TAG, "boot received, starting alarm");
+            setAlarm(context);
+        }
+            Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context))
+                    .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
+                    .addOnSuccessListener(
+                            new OnSuccessListener<DataSet>() {
+                                @Override
+                                public void onSuccess(DataSet dataSet) {
+                                    long total =
+                                            dataSet.isEmpty()
+                                                    ? 0
+                                                    : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
+                                    Log.i(TAG, "Total steps: " + total);
+                                    Calendar calendar = Calendar.getInstance();
+                                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                    //calendar.add(Calendar.DAY_OF_YEAR, -7);
+                                    String formattedDate = format1.format(calendar.getTime());
+                                    FirebaseApp.initializeApp(context);
+                                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    mDatabase.child("Users").child(user.getUid()).child("History").child(formattedDate).setValue(total);
+                                }
+                            })
+                    .addOnFailureListener(
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "There was a problem getting the step count.", e);
 
-// Create a data source
-        DataSource dataSource = new DataSource.Builder()
-                .setAppPackageName(context)
-                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .setStreamName("alarm" + " - step count")
-                .setType(DataSource.TYPE_RAW)
-                .build();
+                                }
+                            });
 
-// Create a data set
-        int stepCountDelta = 1000;
-        DataSet dataSet = DataSet.create(dataSource);
-// For each data point, specify a start time, end time, and the data value -- in this case,
-// the number of new steps.
-        DataPoint dataPoint = dataSet.createDataPoint()
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
-        dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
-        dataSet.add(dataPoint);
-        DataUpdateRequest request = new DataUpdateRequest.Builder()
-                .setDataSet(dataSet)
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .build();
 
-        Task<Void> response = Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context)).updateData(request);
+
     }
     public void setAlarm(Context context)
     {
-        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(context, AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5000, pi); // Millisec * Second * Minute
-    }
-    public void cancelAlarm(Context context)
-    {
         Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(sender);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+        AlarmManager am =( AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + (3*AlarmManager.INTERVAL_HOUR),
+                (3*AlarmManager.INTERVAL_HOUR), alarmIntent);
     }
+
 
 }
