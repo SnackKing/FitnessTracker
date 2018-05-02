@@ -252,8 +252,7 @@ public class MainScreen extends Fragment {
             am.cancel(alarmIntent);
         }
         am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(),
-                500, alarmIntent);
+                SystemClock.elapsedRealtime() + (3* AlarmManager.INTERVAL_HOUR),(3* AlarmManager.INTERVAL_HOUR), alarmIntent);
         getLastCheckedSteps();
         Calendar calendar=Calendar.getInstance();
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -435,7 +434,7 @@ public class MainScreen extends Fragment {
             }
             //challenge completed
             if(currentStepCount >= requirement){
-                challenges.remove(0);
+                challenges.remove(i);
                 int exp = current.getXp();
                 mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
                 mDatabase.child("Users").child(user.getUid()).child("Completed").child("Challenge" + current.getId()).setValue(current);
