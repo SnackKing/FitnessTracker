@@ -36,8 +36,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class RunningResultsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -117,20 +121,21 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_container);
         mapFragment.getMapAsync(this);
-
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         if (distanceLeft <= 0){
+            String timeTaken = getStringTimeTaken(timeLeft, challenge.getTime());
             completed = "You completed the challenge!";
             success = true;
+            mDatabase.child("RunningChallenges").child(Integer.toString(challenge.getId())).child("Leaderboard").child(user.getUid()).setValue(timeTaken);
 
         }
         else{
             completed = "You did not complete the challenge!";
         }
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        user = firebaseAuth.getCurrentUser();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -244,5 +249,19 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 }
                 i = i + 1;
             }
+    }
+    public static String getStringTimeTaken(String timeLeft, String timeGiven){
+        int minutesLeft = Integer.parseInt(timeLeft.substring(0,timeLeft.indexOf(':')));
+        int minutesGiven = Integer.parseInt(timeGiven.substring(0,timeGiven.indexOf(':')));
+        int secondsLeft = Integer.parseInt(timeLeft.substring(timeLeft.indexOf(':')+1));
+            minutesLeft++;
+
+        //it is assumed that every challenge will have starting time in the form xx:00
+        int millis = ((minutesGiven - minutesLeft)* 60 * 1000) + ((60 - secondsLeft)* 1000);
+        return String.format("%d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(millis),
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+        );
     }
 }

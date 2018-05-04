@@ -126,7 +126,7 @@ public class HistoryActivity extends AppCompatActivity
 
         GraphView graph = (GraphView) findViewById(R.id.weekGraph);
          series = new BarGraphSeries<DataPoint>();
-        series.setSpacing(20);
+        series.setSpacing(30);
 
         series.setColor(Color.parseColor("#bb0000"));
 

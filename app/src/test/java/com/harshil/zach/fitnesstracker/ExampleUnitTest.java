@@ -31,7 +31,40 @@ public class ExampleUnitTest {
         boolean isValid = SignUpActivity.isEmailValid("#%@*((*");
     }
     @Test
-    public void testBroadcastReceiverSignal() throws Exception{
-
+    public void timeDifferentialNormal() throws Exception{
+        String timeDiff = RunningResultsActivity.getStringTimeTaken("3:20","10:00");
+        System.out.println(timeDiff);
+        assertTrue(timeDiff.equals("6:40"));
     }
+    @Test
+    public void timeDifferentialDoubleDigits() throws Exception{
+        String timeDiff = RunningResultsActivity.getStringTimeTaken("10:30","15:00");
+        System.out.println(timeDiff);
+        assertTrue(timeDiff.equals("4:30"));
+    }
+    @Test
+    public void timeDifferentialZeroSecondsLeft() throws Exception{
+        String timeDiff = RunningResultsActivity.getStringTimeTaken("5:00","15:00");
+        System.out.println(timeDiff);
+        assertTrue(timeDiff.equals("10:00"));
+    }
+    @Test
+    public void timeDifferentialDoubleDigitsPassed() throws Exception{
+        String timeDiff = RunningResultsActivity.getStringTimeTaken("1:30","15:00");
+        System.out.println(timeDiff);
+        assertTrue(timeDiff.equals("13:30"));
+    }
+    @Test
+    public void timeDifferentialUnder1MinuteAlmostExpired() throws Exception{
+        String timeDiff = RunningResultsActivity.getStringTimeTaken("0:01","1:00");
+        System.out.println(timeDiff);
+        assertTrue(timeDiff.equals("0:59"));
+    }
+    @Test
+    public void timeDifferentialUnder1Minute() throws Exception{
+        String timeDiff = RunningResultsActivity.getStringTimeTaken("0:13","1:00");
+        System.out.println(timeDiff);
+        assertTrue(timeDiff.equals("0:47"));
+    }
+
 }
