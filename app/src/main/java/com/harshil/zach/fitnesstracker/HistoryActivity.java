@@ -115,6 +115,10 @@ public class HistoryActivity extends AppCompatActivity
                             Intent intent = new Intent(HistoryActivity.this,FriendActivity.class);
                             startActivity(intent);
                         }
+                        else if(id == R.id.nav_leaderboard){
+                            Intent intent = new Intent(HistoryActivity.this,LeaderBoardActivity.class);
+                            startActivity(intent);
+                        }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
 

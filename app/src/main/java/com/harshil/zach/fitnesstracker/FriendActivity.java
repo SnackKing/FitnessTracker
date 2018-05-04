@@ -98,6 +98,10 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                             Intent intent = new Intent(FriendActivity.this,HistoryActivity.class);
                             startActivity(intent);
                         }
+                        else if(id == R.id.nav_leaderboard){
+                            Intent intent = new Intent(FriendActivity.this,LeaderBoardActivity.class);
+                            startActivity(intent);
+                        }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
 

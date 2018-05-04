@@ -110,6 +110,10 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                             Intent intent = new Intent(RunningResultsActivity.this,HistoryActivity.class);
                             startActivity(intent);
                         }
+                        else if(id == R.id.nav_leaderboard){
+                            Intent intent = new Intent(RunningResultsActivity.this,LeaderBoardActivity.class);
+                            startActivity(intent);
+                        }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
 

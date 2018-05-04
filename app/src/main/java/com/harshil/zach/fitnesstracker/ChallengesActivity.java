@@ -98,6 +98,10 @@ public class ChallengesActivity extends AppCompatActivity {
                             Intent intent = new Intent(ChallengesActivity.this,HistoryActivity.class);
                             startActivity(intent);
                         }
+                        else if(id == R.id.nav_leaderboard){
+                            Intent intent = new Intent(ChallengesActivity.this,LeaderBoardActivity.class);
+                            startActivity(intent);
+                        }
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
 

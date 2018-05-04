@@ -18,8 +18,13 @@
             android:title="Friends" />
         <item
             android:id = "@+id/history"
-            android:icon="@drawable/ic_history"
+            android:icon="@drawable/ic_linegraph"
             android:title="Stats"
+            />
+        <item
+            android:id = "@+id/nav_leaderboard"
+            android:icon="@drawable/ic_history_black"
+            android:title="Leaderboard"
             />
 
     </group>
