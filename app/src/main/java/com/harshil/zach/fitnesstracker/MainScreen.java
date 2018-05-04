@@ -259,7 +259,7 @@ public class MainScreen extends Fragment {
         //calendar.add(Calendar.DAY_OF_YEAR, -7);
         String formattedDate = format1.format(calendar.getTime());
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Users").child(user.getUid()).child("History").child(formattedDate).setValue(lastCheckedSteps);
+        mDatabase.child("Users").child(user.getUid()).child("History").child(formattedDate).setValue(Integer.parseInt(stepCount.getText().toString()));
     }
 
     @Override
