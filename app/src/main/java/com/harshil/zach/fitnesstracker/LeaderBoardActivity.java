@@ -12,9 +12,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -62,6 +64,9 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
         user = FirebaseAuth.getInstance().getCurrentUser();
         setContentView(R.layout.activity_leader_board);
         listView = findViewById(R.id.list);
+        LayoutInflater inflater = getLayoutInflater();
+        ViewGroup header = (ViewGroup)inflater.inflate(R.layout.leaderboard_header,listView,false);
+        listView.addHeaderView(header);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -119,7 +124,7 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
                 }
                 String[] spinnerArray = new String[numChallenges];
                 for(int i = 0; i < challenges.size();i++){
-                    spinnerArray[i] = Double.toString(challenges.get(i).getDistance()) + "Mile Run";
+                    spinnerArray[i] = Double.toString(challenges.get(i).getDistance()) + " Mile(s) in " + challenges.get(i).getTime();
                 }
                 ArrayAdapter<String> challengeAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, spinnerArray);
                 challengeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

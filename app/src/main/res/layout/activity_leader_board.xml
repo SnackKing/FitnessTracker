@@ -2,14 +2,14 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent"
     tools:context="com.harshil.zach.fitnesstracker.LeaderBoardActivity"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
             xmlns:tools="http://schemas.android.com/tools"
             android:orientation="vertical">
@@ -20,12 +20,15 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"/>
             <Spinner
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/challengeType"></Spinner>
+                android:id="@+id/challengeType"
+                android:layout_marginBottom="25dp"
+                android:layout_marginTop="25dp">
+            </Spinner>
             <ListView
                 android:id="@+id/list"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"></ListView>
 
 

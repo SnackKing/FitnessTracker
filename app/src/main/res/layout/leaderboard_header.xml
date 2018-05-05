@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="20dp"
+    android:paddingTop="20dp"
+    android:background = "@color/colorAccent"
+    >
+    <TextView
+        android:id="@+id/position"
+        android:layout_width="50dp"
+        android:textSize="8pt"
+        android:textColor= "@android:color/white"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="Place" />
+    <TextView
+        android:layout_marginLeft="50dp"
+        android:id="@+id/name"
+        android:textSize="8pt"
+        android:layout_width="100dp"
+        android:textColor= "@android:color/white"
+        android:layout_height="wrap_content"
+        android:text="Name" />
+    <TextView
+        android:id="@+id/time"
+        android:layout_marginLeft="100dp"
+        android:layout_width="50dp"
+        android:textSize="8pt"
+        android:textColor= "@android:color/white"
+        android:layout_height="wrap_content"
+        android:text="Time" />
+</LinearLayout>

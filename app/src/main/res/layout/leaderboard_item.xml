@@ -2,32 +2,32 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
         android:id="@+id/relativeLayout2"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/position"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:text="Position" />
         <TextView
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="40dp"
             android:id="@+id/name"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Name" />
         <TextView
             android:id="@+id/time"
-            android:layout_marginLeft="100dp"
-            android:layout_width="wrap_content"
+            android:layout_marginLeft="140dp"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:text="Time" />
     </LinearLayout>
