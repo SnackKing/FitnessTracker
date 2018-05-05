@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:textColor="@android:color/white"
                 android:layout_height="wrap_content"
-                android:text="update" />
+                android:text="Update" />
         </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -55,7 +55,7 @@
             android:id="@+id/rank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="RANK"
+            android:text="Updating Rank"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textStyle="bold" 
             android:layout_centerInParent="true"/>
@@ -68,7 +68,7 @@
                 android:id="@+id/donut_progress"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                app:donut_text="x/y"
+                app:donut_text="Updating"
                 app:donut_text_color="@android:color/black"
                 app:donut_circle_starting_degree="270"
                 app:donut_finished_color="@color/colorAccent"

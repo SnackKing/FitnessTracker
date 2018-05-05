@@ -19,17 +19,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"/>
+            <Switch
+                android:id="@+id/toggleFriends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:text="Only Show Friends" />
             <Spinner
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/challengeType"
                 android:layout_marginBottom="25dp"
-                android:layout_marginTop="25dp">
+                android:layout_marginTop="15dp">
             </Spinner>
+
             <ListView
                 android:id="@+id/list"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"></ListView>
+                android:layout_height="wrap_content">
+
+            </ListView>
+            <TextView
+                android:id="@+id/empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="No data" />
 
 
         </LinearLayout>

@@ -19,8 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -50,11 +53,13 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
     DatabaseReference mDatabase;
     FirebaseUser user;
     private Map<String, String> leaderBoardForCurrentChallenge = new HashMap<>();
+    private Map<String,String> friendsLeaderBoardForCurrentChallenge = new HashMap<>();
     private ArrayList<String> friends = new ArrayList<>();
     private  ArrayList<RunningChallenge> challenges = new ArrayList<>();
     int currentChallengeId = 0;
     Spinner spinner;
     ListView listView;
+    Switch toggle;
 
 
     @Override
@@ -64,6 +69,8 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
         user = FirebaseAuth.getInstance().getCurrentUser();
         setContentView(R.layout.activity_leader_board);
         listView = findViewById(R.id.list);
+        TextView emptyText = (TextView)findViewById(android.R.id.empty);
+        listView.setEmptyView(emptyText);
         LayoutInflater inflater = getLayoutInflater();
         ViewGroup header = (ViewGroup)inflater.inflate(R.layout.leaderboard_header,listView,false);
         listView.addHeaderView(header);
@@ -72,7 +79,8 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-       mDrawerLayout = findViewById(R.id.drawer_layout);
+        toggle = (Switch) findViewById(R.id.toggleFriends);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -136,6 +144,18 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
 
             }
         });
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(toggle.isChecked()){
+                    LeaderboardAdapter adapter = new LeaderboardAdapter(friendsLeaderBoardForCurrentChallenge);
+                    listView.setAdapter(adapter);
+                }
+                else{
+                    LeaderboardAdapter adapter = new LeaderboardAdapter(leaderBoardForCurrentChallenge);
+                    listView.setAdapter(adapter);
+                }
+            }
+        });
 
     }
     @Override
@@ -191,8 +211,17 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
                     for(DataSnapshot current: dataSnapshot.child("RunningChallenges").child(Integer.toString(challengeId)).child("Leaderboard").getChildren()){
                         String username = dataSnapshot.child("Users").child(current.getKey()).child("name").getValue(String.class);
                         leaderBoardForCurrentChallenge.put(username,current.getValue(String.class));
+                        //if the user is a friend of the current user, also include them in a separate map.
+                        if(friends.contains(current.getKey())){
+                            friendsLeaderBoardForCurrentChallenge.put(username,current.getValue(String.class));
+                        }
                     }
                     leaderBoardForCurrentChallenge = sortByComparator(leaderBoardForCurrentChallenge, true);
+                    leaderBoardForCurrentChallenge = getTop100(leaderBoardForCurrentChallenge);
+                    leaderBoardForCurrentChallenge = sortByComparator(leaderBoardForCurrentChallenge, true);
+                    friendsLeaderBoardForCurrentChallenge = sortByComparator(friendsLeaderBoardForCurrentChallenge,true);
+                    friendsLeaderBoardForCurrentChallenge = getTop100(friendsLeaderBoardForCurrentChallenge);
+                    friendsLeaderBoardForCurrentChallenge = sortByComparator(friendsLeaderBoardForCurrentChallenge,true);
                     LeaderboardAdapter adapter = new LeaderboardAdapter(leaderBoardForCurrentChallenge);
                     listView.setAdapter(adapter);
 
@@ -237,6 +266,18 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
         }
 
         return sortedMap;
+    }
+    private static Map<String,String> getTop100(Map<String,String> sortedMap){
+        Map<String,String> top100 = new HashMap<String,String>();
+        int i = 0;
+        for(Map.Entry<String,String> pair: sortedMap.entrySet()){
+            if(i < 100){
+                top100.put(pair.getKey(),pair.getValue());
+            }
+            i++;
+
+        }
+        return top100;
     }
 
 
