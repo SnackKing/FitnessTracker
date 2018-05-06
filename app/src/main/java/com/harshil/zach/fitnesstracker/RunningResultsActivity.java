@@ -128,12 +128,10 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        final String timeTaken = getStringTimeTaken(timeLeft, challenge.getTime());
         if (distanceLeft <= 0){
-            String timeTaken = getStringTimeTaken(timeLeft, challenge.getTime());
             completed = "You completed the challenge!";
             success = true;
-            mDatabase.child("RunningChallenges").child(Integer.toString(challenge.getId())).child("Leaderboard").child(user.getUid()).setValue(timeTaken);
-
         }
         else{
             completed = "You did not complete the challenge!";
@@ -155,6 +153,11 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 if (success && keepGoing){
                     keepGoing = false;
                     addExperience();
+                    String previousBest =  dataSnapshot.child("RunningChallenges").child(Integer.toString(challenge.getId())).child("Leaderboard").child(currentUser.getUid()).getValue(String.class);
+                    if(isBetterTime(timeTaken,previousBest)){
+                        mDatabase.child("RunningChallenges").child(Integer.toString(challenge.getId())).child("Leaderboard").child(currentUser.getUid()).setValue(timeTaken);
+
+                    }
                 }
 
             }
@@ -267,5 +270,20 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 TimeUnit.MILLISECONDS.toSeconds(millis) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
         );
+    }
+    public static boolean isBetterTime(String timeTaken, String previousBest){
+        int minutesTaken = Integer.parseInt(timeTaken.substring(0,timeTaken.indexOf(':')));
+        int secondsTaken = Integer.parseInt(timeTaken.substring(timeTaken.indexOf(':')+1));
+        int previousMinutesTaken = Integer.parseInt(previousBest.substring(0,previousBest.indexOf(':')));
+        int previousSecondsTaken = Integer.parseInt(previousBest.substring(previousBest.indexOf(':')+1));
+        int millisTaken = (minutesTaken*60*1000) + (secondsTaken*1000);
+        int previousMillisTaken = (previousMinutesTaken*60*1000) + (previousSecondsTaken*1000);
+        boolean isBetter = false;
+        if(millisTaken < previousMillisTaken){
+            isBetter = true;
+        }
+        return isBetter;
+
+
     }
 }

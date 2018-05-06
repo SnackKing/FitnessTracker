@@ -66,5 +66,25 @@ public class ExampleUnitTest {
         System.out.println(timeDiff);
         assertTrue(timeDiff.equals("0:47"));
     }
+    @Test
+    public void testIsBetterTimeNormalTrue() throws Exception{
+        boolean isBetter = RunningResultsActivity.isBetterTime("10:00","15:00");
+        assertTrue(isBetter);
+    }
+    @Test
+    public void testIsBetterTimeNormalFalse() throws Exception{
+        boolean isBetter = RunningResultsActivity.isBetterTime("15:00","10:00");
+        assertTrue(!isBetter);
+    }
+    @Test
+    public void testIsBetterSame() throws Exception{
+        boolean isBetter = RunningResultsActivity.isBetterTime("10:00","10:00");
+        assertTrue(!isBetter);
+    }
+    @Test
+    public void testIsBetterTimeSingleDigits() throws Exception{
+        boolean isBetter = RunningResultsActivity.isBetterTime("1:00","1:30");
+        assertTrue(isBetter);
+    }
 
 }
