@@ -186,6 +186,7 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                         TextView name = dialogView.findViewById(R.id.name);
                         TextView email = dialogView.findViewById(R.id.email);
                         TextView rank = dialogView.findViewById(R.id.rank);
+                        TextView runRank = dialogView.findViewById(R.id.runRank);
                         CircleImageView profile = dialogView.findViewById(R.id.profile_image);
                         String img = foundFriend.getProfile();
                         if(!img.equals("")){
@@ -195,6 +196,7 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                         name.setText(foundFriend.getName());
                         email.setText(foundFriend.getEmail());
                         rank.setText(Integer.toString(foundFriend.getRank()));
+                        runRank.setText(Integer.toString(foundFriend.getRunRank()));
                         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String userAltEmail = user.getEmail().replace('.',',');
