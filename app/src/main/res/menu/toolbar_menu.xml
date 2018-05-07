@@ -15,5 +15,9 @@
         android:id="@+id/action_sign_out"
         android:title="Sign out"
         app:showAsAction="never"/>
+    <item
+        android:id = "@+id/action_FAQ"
+        android:title="Frequently Asked Questions"
+        app:showAsAction="never"/>
 
 </menu>

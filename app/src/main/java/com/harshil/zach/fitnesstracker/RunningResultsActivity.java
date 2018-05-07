@@ -238,6 +238,9 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 Intent homeIntent = new Intent(getApplicationContext(),MainAndRunningTabsScreen.class);
                 startActivity(homeIntent);
                 break;
+            case R.id.action_FAQ:
+                Intent faqIntent = new Intent(getApplicationContext(),FaqActivity.class);
+                startActivity(faqIntent);
 
         }
         return super.onOptionsItemSelected(item);

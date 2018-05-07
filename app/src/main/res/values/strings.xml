@@ -38,4 +38,20 @@
     <string name="tab_text_3">Tab 3</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_leader_board">LeaderBoardActivity</string>
+    <string name="title_activity_faq">FaqActivity</string>
+    <string name = "twoRanksReason">One rank represents your step count rank, while the other represents your running rank.
+    Your step count rank can be improved by increasing your daily step count and completing challenges. Your runnning rank can only be increased
+    by completing running challenges. The runnning challenges can be completed as many times as you want.</string>
+    <string name="addFriend">To add a friend, use the navigation drawer to go to the friend page and then tap on the magnifying glass icon.
+    Enter the email address of the friend you want to add. If they are found, a popup will show you their account details and you will be given an option to add them. </string>
+    <string name = "changeAccountInfo">Yes, you can change your account information by using the navigation drawer
+        in the top left of the screen to navigate to the profile page and tapping on any of the pencil icons.</string>
+    <string name = "statsExplanation">The stats page shows your step count information over the past 7 days, including today.
+    Each bar represents a day. The stats page also shows the total number of steps recorded since you signed up, and the average
+    steps taken per day since you signed up.</string>
+    <string name = "EmailExplanation">Your email address is only visibile to your friends and is not made public. Your email is only
+    used by other users to add you as a friend. On public data lists such as leaderboards, only your name is shown. No other data is
+    made public other than your challenge times.</string>
+    <string name = "DataExplanation">Your data is not being used for any external purposes. This application is simply a side project. I am not making any
+    money from this application. For more information on my motivations, check out the "About" page.</string>
 </resources>
