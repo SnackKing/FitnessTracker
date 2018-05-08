@@ -73,7 +73,7 @@ public class HistoryActivity extends AppCompatActivity
 
     private static final String TAG = "HistorytActivity";
     GraphView weekGraph;
-    BarGraphSeries<DataPoint> series;
+    LineGraphSeries<DataPoint> series;
     GoogleApiClient mGoogleApiClient;
     private DrawerLayout mDrawerLayout;
     FirebaseAuth firebaseAuth;
@@ -129,9 +129,10 @@ public class HistoryActivity extends AppCompatActivity
                 });
 
         GraphView graph = (GraphView) findViewById(R.id.weekGraph);
-         series = new BarGraphSeries<DataPoint>();
-        series.setSpacing(30);
-
+         series = new LineGraphSeries<>();
+        series.setDrawDataPoints(true);
+        series.setDataPointsRadius(15);
+        series.setThickness(10);
         series.setColor(Color.parseColor("#bb0000"));
 
         graph.addSeries(series);

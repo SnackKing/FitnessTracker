@@ -154,7 +154,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         ref.child("Users").child(user.getUid()).setValue(current);
                         ref.child("email_uid").child(user.getEmail().replace('.',',')).setValue(user.getUid());
                         ref.child("uid_email").child(user.getUid()).setValue(user.getEmail());
-                      
+
 
 
 

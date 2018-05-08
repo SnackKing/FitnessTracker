@@ -42,7 +42,6 @@ import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,8 +51,8 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
     private DrawerLayout mDrawerLayout;
     DatabaseReference mDatabase;
     FirebaseUser user;
-    private Map<String, String> leaderBoardForCurrentChallenge = new HashMap<>();
-    private Map<String,String> friendsLeaderBoardForCurrentChallenge = new HashMap<>();
+    private Map<String, String> leaderBoardForCurrentChallenge = new LinkedHashMap<>();
+    private Map<String,String> friendsLeaderBoardForCurrentChallenge = new LinkedHashMap<>();
     private ArrayList<String> friends = new ArrayList<>();
     private  ArrayList<RunningChallenge> challenges = new ArrayList<>();
     int currentChallengeId = 0;
@@ -221,10 +220,10 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
                     }
                     leaderBoardForCurrentChallenge = sortByComparator(leaderBoardForCurrentChallenge, true);
                     leaderBoardForCurrentChallenge = getTop100(leaderBoardForCurrentChallenge);
-                    leaderBoardForCurrentChallenge = sortByComparator(leaderBoardForCurrentChallenge, true);
+                    //leaderBoardForCurrentChallenge = sortByComparator(leaderBoardForCurrentChallenge, true);
                     friendsLeaderBoardForCurrentChallenge = sortByComparator(friendsLeaderBoardForCurrentChallenge,true);
                     friendsLeaderBoardForCurrentChallenge = getTop100(friendsLeaderBoardForCurrentChallenge);
-                    friendsLeaderBoardForCurrentChallenge = sortByComparator(friendsLeaderBoardForCurrentChallenge,true);
+                   // friendsLeaderBoardForCurrentChallenge = sortByComparator(friendsLeaderBoardForCurrentChallenge,true);
                     LeaderboardAdapter adapter = new LeaderboardAdapter(leaderBoardForCurrentChallenge);
                     listView.setAdapter(adapter);
 
@@ -271,7 +270,7 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
         return sortedMap;
     }
     private static Map<String,String> getTop100(Map<String,String> sortedMap){
-        Map<String,String> top100 = new HashMap<String,String>();
+        Map<String,String> top100 = new LinkedHashMap<String,String>();
         int i = 0;
         for(Map.Entry<String,String> pair: sortedMap.entrySet()){
             if(i < 100){
