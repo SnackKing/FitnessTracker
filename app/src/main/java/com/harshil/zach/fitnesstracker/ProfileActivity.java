@@ -109,11 +109,11 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LayoutInflater inflater = getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.dialog_update_email, null);
+                final View dialogView = inflater.inflate(R.layout.dialog_update_email, null);
                 final AlertDialog dialog = new AlertDialog.Builder(ProfileActivity.this)
                         .setView(dialogView)
-                        .setTitle("Enter New Email")
-                        .setPositiveButton("Confirm", null) //override the onclick
+                        .setTitle("Change Email")
+                        .setPositiveButton("OK", null) //Set to null. We override the onclick
                         .setNegativeButton("Cancel", null)
                         .create();
 
@@ -131,72 +131,81 @@ public class ProfileActivity extends AppCompatActivity {
                                 //validate email
                                 final EditText newEmail = dialog.findViewById(R.id.newEmail);
                                 final String newEmailString = newEmail.getText().toString();
+                                final EditText password = dialog.findViewById(R.id.password);
                                 if (isEmailValid(newEmailString)) {
+
                                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                     String oldEmail = user.getEmail();
                                     final String altOldEmail = oldEmail.replace('.', ',');
-                                    SharedPreferences sharedPref = getSharedPreferences("auth", 0);
-                                    String password = sharedPref.getString("password", "");
+                                    final String passwordString = password.getText().toString();
+
                                     AuthCredential credential = EmailAuthProvider
-                                            .getCredential(user.getEmail(), password);
+                                            .getCredential(user.getEmail(), passwordString);
                                     // Prompt the user to re-provide their sign-in credentials
                                     user.reauthenticate(credential)
                                             .addOnCompleteListener(new OnCompleteListener < Void > () {
                                                 @Override
                                                 public void onComplete(@NonNull Task < Void > task) {
-                                                    Log.d("ProfileActivity", "User re-authenticated.");
-                                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                                    user.updateEmail(newEmailString)
-                                                            .addOnCompleteListener(new OnCompleteListener < Void > () {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task < Void > task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        Log.d("ProfileActivity", "User email address updated.");
-                                                                        email.setText(newEmailString);
-                                                                        mDatabase.child("email").setValue(newEmailString);
-                                                                        final String formattedEmail = newEmailString.replace('.', ',');
-                                                                        //UPDATE EMAIL_UID TABLE******
-                                                                        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                                                        //remove old email from email_uid table
-                                                                        FirebaseDatabase.getInstance().getReference().child("email_uid").child(altOldEmail).setValue(null);
-                                                                        FirebaseDatabase.getInstance().getReference().child("email_uid").child(formattedEmail).setValue(user.getUid());
-                                                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
-                                                                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                            @Override
-                                                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                                                //this is pretty gross, but we need to update all of the current user's friend's references to reflect the new email
-                                                                                for (DataSnapshot currentFriend: dataSnapshot.child("FriendedBy").getChildren()) {
-                                                                                    String email = currentFriend.getKey();
-                                                                                    String friendId = currentFriend.getValue(String.class);
-                                                                                    String altEmail = email.replace(',', '.');
-                                                                                    String userAltEmail = user.getEmail().replace('.', ',');
-                                                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("Friends").child(altOldEmail).setValue(null);
-                                                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("Friends").child(formattedEmail).setValue(user.getUid());
+                                                    if(task.isSuccessful()) {
+
+
+                                                        Log.d("ProfileActivity", "User re-authenticated.");
+                                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                        user.updateEmail(newEmailString)
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if (task.isSuccessful()) {
+                                                                            Log.d("ProfileActivity", "User email address updated.");
+                                                                            email.setText(newEmailString);
+                                                                            mDatabase.child("email").setValue(newEmailString);
+                                                                            final String formattedEmail = newEmailString.replace('.', ',');
+                                                                            //UPDATE EMAIL_UID TABLE******
+                                                                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                                            //remove old email from email_uid table
+                                                                            FirebaseDatabase.getInstance().getReference().child("email_uid").child(altOldEmail).setValue(null);
+                                                                            FirebaseDatabase.getInstance().getReference().child("email_uid").child(formattedEmail).setValue(user.getUid());
+                                                                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
+                                                                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                @Override
+                                                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                                    //this is pretty gross, but we need to update all of the current user's friend's references to reflect the new email
+                                                                                    for (DataSnapshot currentFriend : dataSnapshot.child("FriendedBy").getChildren()) {
+                                                                                        String email = currentFriend.getKey();
+                                                                                        String friendId = currentFriend.getValue(String.class);
+                                                                                        String altEmail = email.replace(',', '.');
+                                                                                        String userAltEmail = user.getEmail().replace('.', ',');
+                                                                                        FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("Friends").child(altOldEmail).setValue(null);
+                                                                                        FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("Friends").child(formattedEmail).setValue(user.getUid());
+                                                                                    }
+                                                                                    //update friendedBy references for all users
+                                                                                    for (DataSnapshot currentFriend : dataSnapshot.child("Friends").getChildren()) {
+                                                                                        String email = currentFriend.getKey();
+                                                                                        String friendId = currentFriend.getValue(String.class);
+                                                                                        String altEmail = email.replace(',', '.');
+                                                                                        String userAltEmail = user.getEmail().replace('.', ',');
+                                                                                        FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("FriendedBy").child(altOldEmail).setValue(null);
+                                                                                        FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("FriendedBy").child(formattedEmail).setValue(user.getUid());
+
+                                                                                    }
                                                                                 }
-                                                                                //update friendedBy references for all users
-                                                                                for (DataSnapshot currentFriend: dataSnapshot.child("Friends").getChildren()) {
-                                                                                    String email = currentFriend.getKey();
-                                                                                    String friendId = currentFriend.getValue(String.class);
-                                                                                    String altEmail = email.replace(',', '.');
-                                                                                    String userAltEmail = user.getEmail().replace('.', ',');
-                                                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("FriendedBy").child(altOldEmail).setValue(null);
-                                                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(friendId).child("FriendedBy").child(formattedEmail).setValue(user.getUid());
+
+                                                                                @Override
+                                                                                public void onCancelled(DatabaseError databaseError) {
+                                                                                    Log.d("UPDATEEMAIL", databaseError.getMessage());
 
                                                                                 }
-                                                                            }
-
-                                                                            @Override
-                                                                            public void onCancelled(DatabaseError databaseError) {
-                                                                                Log.d("UPDATEEMAIL", databaseError.getMessage());
-
-                                                                            }
-                                                                        });
-                                                                        dialog.dismiss();
-                                                                    } else {
-                                                                        newEmail.setError("Email already taken");
+                                                                            });
+                                                                            dialog.dismiss();
+                                                                        } else {
+                                                                            newEmail.setError("Email already taken");
+                                                                        }
                                                                     }
-                                                                }
-                                                            });
+                                                                });
+                                                    }
+                                                    else{
+                                                        password.setError("Incorrect Password");
+                                                    }
                                                 }
                                             });
                                 } else {
