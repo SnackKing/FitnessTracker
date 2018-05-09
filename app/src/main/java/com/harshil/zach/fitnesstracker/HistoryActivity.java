@@ -20,6 +20,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -53,6 +57,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
@@ -69,17 +74,22 @@ import static java.text.DateFormat.getTimeInstance;
 
 
 public class HistoryActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "HistorytActivity";
-    GraphView weekGraph;
+    GraphView graph;
     LineGraphSeries<DataPoint> series;
+    ArrayList<DataPoint> data = new ArrayList<>();
     GoogleApiClient mGoogleApiClient;
     private DrawerLayout mDrawerLayout;
     FirebaseAuth firebaseAuth;
     DatabaseReference mDatabase;
     TextView totalSteps;
     TextView averageSteps;
+    Spinner spinner;
+    final int WEEK = 0;
+    final int MONTH = 1;
+    final int ALLTIME = 2;
 
 
 
@@ -127,8 +137,13 @@ public class HistoryActivity extends AppCompatActivity
                         return true;
                     }
                 });
-
-        GraphView graph = (GraphView) findViewById(R.id.weekGraph);
+        spinner = (Spinner) findViewById(R.id.timeline);
+        spinner.setOnItemSelectedListener(this);
+        String[] spinnerArray = {"Last 7 Days","Last 30 Days", "All Time"};
+        ArrayAdapter<String> timeAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, spinnerArray);
+        timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(timeAdapter);
+        graph = (GraphView) findViewById(R.id.weekGraph);
          series = new LineGraphSeries<>();
         series.setDrawDataPoints(true);
         series.setDataPointsRadius(15);
@@ -138,7 +153,7 @@ public class HistoryActivity extends AppCompatActivity
         graph.addSeries(series);
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
         graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 3 because of the space
-        graph.setTitle("Last 7 Days");
+       // graph.setTitle("Last 7 Days");
 
 // set manual x bounds to have nice steps
         Calendar calendar = Calendar.getInstance();
@@ -189,11 +204,20 @@ public class HistoryActivity extends AppCompatActivity
                     try {
                         Date dateFromString = sdf.parse(dateString);
                         DataPoint point = new DataPoint(dateFromString,numSteps);
-                        series.appendData(point, false, 7);
+                        data.add(point);
+
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
+                //set initial data
+                DataPoint[] initData = new DataPoint[data.size()];
+                for(int i = 0; i < data.size();i++){
+                    initData[i] = data.get(i);
+                }
+                series.resetData(initData);
+
+
                 User user = snapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 totalSteps.setText("Cumulative Steps Taken: " + Integer.toString(user.totalSteps()));
                 SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -221,7 +245,8 @@ public class HistoryActivity extends AppCompatActivity
             }
         });
 
-        }
+
+    }
     @Override
     protected  void onResume(){
         super.onResume();
@@ -336,5 +361,65 @@ public class HistoryActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        if(i == WEEK){
+            updateGraph(WEEK);
+        }
+        else if(i == MONTH){
+            updateGraph(MONTH);
+        }
+        else if(i == ALLTIME){
+            updateGraph(ALLTIME);
+        }
 
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+    public void updateGraph(int typeCode){
+        if(typeCode == WEEK){
+            DataPoint[] weekData = new DataPoint[7];
+            int pos = 0;
+            int j = data.size() - 7;
+            if(7 >= data.size()){
+                j = 0;
+                weekData = new DataPoint[data.size()];
+            }
+            for(int i = j; i < data.size();i++ ){
+                weekData[pos] = data.get(i);
+                pos++;
+            }
+            graph.setTitle("Last 7 days");
+            series.resetData(weekData);
+        }
+        else if(typeCode == MONTH){
+            DataPoint[] monthData = new DataPoint[30];
+            int pos = 0;
+            int j = data.size() - 30;
+            if(30 >= data.size()){
+                j = 0;
+                monthData = new DataPoint[data.size()];
+            }
+            for(int i = j; i < data.size();i++ ){
+                monthData[pos] = data.get(i);
+                pos++;
+            }
+            graph.setTitle("Last 30 days");
+            series.resetData(monthData);
+
+        }
+        else if(typeCode == ALLTIME){
+            DataPoint [] allTimeData = new DataPoint[data.size()];
+            for(int i = 0; i < data.size();i++){
+                allTimeData[i] = data.get(i);
+            }
+            graph.setTitle("Since Sign-Up");
+            series.resetData(allTimeData);
+
+        }
+
+    }
 }
