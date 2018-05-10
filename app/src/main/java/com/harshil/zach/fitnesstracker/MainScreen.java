@@ -367,6 +367,7 @@ public class MainScreen extends Fragment {
         exp = exp/100;
         mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
         userExp += exp;
+        lastCheckedSteps = total;
 
         //update UI and potentially rank
         calculatePercent();
@@ -439,6 +440,7 @@ public class MainScreen extends Fragment {
                 mDatabase.child("Users").child(user.getUid()).child("Completed").child("Challenge" + current.getId()).setValue(current);
                 userExp += exp;
                 calculatePercent();
+                i--;
 
             }
             i++;
