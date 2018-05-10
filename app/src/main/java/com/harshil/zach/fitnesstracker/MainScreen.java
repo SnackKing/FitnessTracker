@@ -424,8 +424,7 @@ public class MainScreen extends Fragment {
         while(i < challenges.size()){
             Challenge current = challenges.get(i);
             int requirement = current.getNumSteps();
-            int currentStepCount = Integer.parseInt(stepCount.getText().toString());
-            float currentProgress = (float)currentStepCount/requirement;
+            float currentProgress = (float)lastCheckedSteps/requirement;
             float percent = currentProgress * 100;
             //current challenge is closest to completion
             if(percent < 100 && percent > maxProgress){
@@ -433,7 +432,7 @@ public class MainScreen extends Fragment {
                 closestChallenge = current;
             }
             //challenge completed
-            if(currentStepCount >= requirement){
+            if(lastCheckedSteps >= requirement){
                 challenges.remove(i);
                 int exp = current.getXp();
                 mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);

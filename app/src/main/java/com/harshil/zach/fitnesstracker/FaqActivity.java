@@ -105,9 +105,10 @@ public class FaqActivity extends AppCompatActivity {
                 Intent homeIntent = new Intent(getApplicationContext(),MainAndRunningTabsScreen.class);
                 startActivity(homeIntent);
                 break;
-            case R.id.action_FAQ:
-                Intent intent = new Intent(getApplicationContext(),FaqActivity.class);
-                startActivity(intent);
+            case R.id.action_about:
+                Intent aboutIntent = new Intent(getApplicationContext(),AboutActivity.class);
+                startActivity(aboutIntent);
+                break;
 
         }
         return super.onOptionsItemSelected(item);

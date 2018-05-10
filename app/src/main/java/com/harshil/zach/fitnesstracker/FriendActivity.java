@@ -269,6 +269,11 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
             case R.id.action_FAQ:
                 Intent intent = new Intent(getApplicationContext(),FaqActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.action_about:
+                Intent aboutIntent = new Intent(getApplicationContext(),AboutActivity.class);
+                startActivity(aboutIntent);
+                break;
 
         }
         return super.onOptionsItemSelected(item);

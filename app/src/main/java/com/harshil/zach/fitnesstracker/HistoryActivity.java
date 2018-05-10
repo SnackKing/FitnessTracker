@@ -183,7 +183,7 @@ public class HistoryActivity extends AppCompatActivity
         graph.getGridLabelRenderer().setHumanRounding(false);
         graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
         graph.getGridLabelRenderer().setVerticalAxisTitle("Steps");
-        graph.getGridLabelRenderer().setPadding(32);
+        //graph.getGridLabelRenderer().setPadding(32);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -349,6 +349,11 @@ public class HistoryActivity extends AppCompatActivity
             case R.id.action_FAQ:
                 Intent intent = new Intent(getApplicationContext(),FaqActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.action_about:
+                Intent aboutIntent = new Intent(getApplicationContext(),AboutActivity.class);
+                startActivity(aboutIntent);
+                break;
 
         }
         return super.onOptionsItemSelected(item);
