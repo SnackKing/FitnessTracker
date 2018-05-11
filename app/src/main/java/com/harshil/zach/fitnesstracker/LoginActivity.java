@@ -1,6 +1,8 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -8,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView = (EditText) findViewById(R.id.password);
         Button signin = (Button) findViewById(R.id.email_sign_in_button);
         Button goSignUp = (Button) findViewById(R.id.goToSignUp);
+        Button goReset = (Button) findViewById(R.id.goToReset);
         firebaseAuth = FirebaseAuth.getInstance();
         goSignUp.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -67,6 +71,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 authenticateUser(view.getContext());
+            }
+        });
+        goReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createResetDialog();
             }
         });
     }
@@ -101,6 +111,44 @@ public class LoginActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+    public void createResetDialog(){
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LoginActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_reset_password, null);
+        dialogBuilder.setTitle("Reset Password");
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setPositiveButton("Send Reset Email", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                EditText email = dialogView.findViewById(R.id.resetEmail);
+                String emailAddress = email.getText().toString();
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                auth.sendPasswordResetEmail(emailAddress)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(),"Email sent", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+
+
+
+                dialog.dismiss();
+            }
+        });
+
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // cancel
+                dialog.dismiss();
+
+            }
+        });
+
+        dialogBuilder.show();
+
     }
 
 
