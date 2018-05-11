@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FootRace</string>
+    <string name="app_name">FitRace</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -54,7 +54,7 @@
     made public other than your challenge times.</string>
     <string name="DataExplanation">Your data is not being used for any external purposes. This application is simply a side project. I am not making any
     money from this application. For more information on my motivations, check out the "About" page.</string>
-    <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_about">About</string>
     <string name="aboutDevs">My name is Zachary Allegretti and I am a Computer Science student at The Ohio State University in Columbus, Ohio. This app was
     initially developed as my class project for CSE 5236: Mobile Application Development during the Spring of 2018. Harshil Amin and I worked together to produce a
     mostly complete version of the app. After the class ended I continued development by myself in order to launch it to the Google Play Store.</string>

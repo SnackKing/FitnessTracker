@@ -212,6 +212,7 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
     }
     public void getLeaderboard(final int challengeId){
         leaderBoardForCurrentChallenge.clear();
+        friendsLeaderBoardForCurrentChallenge.clear();
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -219,7 +220,7 @@ public class LeaderBoardActivity  extends AppCompatActivity implements AdapterVi
                         String username = dataSnapshot.child("Users").child(current.getKey()).child("name").getValue(String.class);
                         leaderBoardForCurrentChallenge.put(username,current.getValue(String.class));
                         //if the user is a friend of the current user, also include them in a separate map.
-                        if(friends.contains(current.getKey())){
+                        if(friends.contains(current.getKey()) || current.getKey().equals(user.getUid())){
                             friendsLeaderBoardForCurrentChallenge.put(username,current.getValue(String.class));
                         }
                     }
