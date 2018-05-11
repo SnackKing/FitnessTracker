@@ -84,33 +84,41 @@ public class LoginActivity extends AppCompatActivity {
         //get user input
         String email = mEmailView.getText().toString().trim();
        final String password = mPasswordView.getText().toString().trim();
-        //Sign user in with email and password
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
-                            SharedPreferences sharedPref = getSharedPreferences("auth",0);
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString("password", password);
-                            editor.commit();
+       if(email.equals("")){
+           mEmailView.setError("Can't be blank");
+       }
+       else if(password.equals("")){
+           mPasswordView.setError("Can't be blank");
+       }
+       else {
+           //Sign user in with email and password
+           firebaseAuth.signInWithEmailAndPassword(email, password)
+                   .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                       @Override
+                       public void onComplete(@NonNull Task<AuthResult> task) {
+                           if (task.isSuccessful()) {
+                               // Sign in success, update UI with the signed-in user's information
+                               FirebaseUser user = firebaseAuth.getCurrentUser();
+                               SharedPreferences sharedPref = getSharedPreferences("auth", 0);
+                               SharedPreferences.Editor editor = sharedPref.edit();
+                               editor.putString("password", password);
+                               editor.commit();
 
 
-                            Intent intent = new Intent(context, MainAndRunningTabsScreen.class);
-                            context.startActivity(intent);
+                               Intent intent = new Intent(context, MainAndRunningTabsScreen.class);
+                               context.startActivity(intent);
 
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(LoginActivity.this, "Login failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            // updateUI(null);
-                        }
+                           } else {
+                               // If sign in fails, display a message to the user.
+                               Toast.makeText(LoginActivity.this, "Login failed.",
+                                       Toast.LENGTH_SHORT).show();
+                               // updateUI(null);
+                           }
 
-                        // ...
-                    }
-                });
+                           // ...
+                       }
+                   });
+       }
     }
     public void createResetDialog(){
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LoginActivity.this);
