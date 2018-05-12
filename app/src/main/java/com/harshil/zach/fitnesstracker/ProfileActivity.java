@@ -132,12 +132,13 @@ public class ProfileActivity extends AppCompatActivity {
                                 final EditText newEmail = dialog.findViewById(R.id.newEmail);
                                 final String newEmailString = newEmail.getText().toString();
                                 final EditText password = dialog.findViewById(R.id.password);
-                                if (isEmailValid(newEmailString)) {
+                                final String passwordString = password.getText().toString();
+                                if (isEmailValid(newEmailString) && !newEmailString.equals("") && !passwordString.equals("")) {
 
                                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                     String oldEmail = user.getEmail();
                                     final String altOldEmail = oldEmail.replace('.', ',');
-                                    final String passwordString = password.getText().toString();
+
 
                                     AuthCredential credential = EmailAuthProvider
                                             .getCredential(user.getEmail(), passwordString);
@@ -209,7 +210,12 @@ public class ProfileActivity extends AppCompatActivity {
                                                 }
                                             });
                                 } else {
-                                    newEmail.setError("Invalid email");
+                                    if(passwordString.equals("")){
+                                        password.setError("Can't be blank");
+                                    }
+                                    else{
+                                        newEmail.setError("Invalid email");
+                                    }
 
                                 }
                             }
@@ -352,6 +358,10 @@ public class ProfileActivity extends AppCompatActivity {
                                 if (!SignUpActivity.isPasswordValid(newPassString)) {
                                     newPass.setError("Password must be at least 8 characters at have 1 letter, 1 number and 1 special character");
                                     valid = false;
+                                }
+                                if(oldPassString.equals("")){
+                                    valid = false;
+                                    oldPass.setError("Can't be blank");
                                 }
                                 if (valid) {
                                     final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

@@ -131,15 +131,20 @@ public class LoginActivity extends AppCompatActivity {
                 EditText email = dialogView.findViewById(R.id.resetEmail);
                 String emailAddress = email.getText().toString();
                 FirebaseAuth auth = FirebaseAuth.getInstance();
-                auth.sendPasswordResetEmail(emailAddress)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(),"Email sent", Toast.LENGTH_LONG).show();
+                if(emailAddress.equals("")){
+                    email.setError("Can't be blank");
+                }
+                else {
+                    auth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getApplicationContext(), "Email sent", Toast.LENGTH_LONG).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
 
 
 

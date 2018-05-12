@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingTop="15dp"
-            android:text="Select a Challenge to Begin"
+            android:text="Select a Challenge"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
 
