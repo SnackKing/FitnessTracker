@@ -345,7 +345,7 @@ public class MainScreen extends Fragment {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w(TAG, "There was a problem getting the step count.", e);
-                                //Toast.makeText(getActivity(),"A problem occurred",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(),"A problem occurred",Toast.LENGTH_SHORT).show();
 
                             }
                         });
@@ -367,7 +367,6 @@ public class MainScreen extends Fragment {
         exp = exp/100;
         mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
         userExp += exp;
-        lastCheckedSteps = total;
 
         //update UI and potentially rank
         calculatePercent();
@@ -425,7 +424,8 @@ public class MainScreen extends Fragment {
         while(i < challenges.size()){
             Challenge current = challenges.get(i);
             int requirement = current.getNumSteps();
-            float currentProgress = (float)lastCheckedSteps/requirement;
+            int currentStepCount = Integer.parseInt(stepCount.getText().toString());
+            float currentProgress = (float)currentStepCount/requirement;
             float percent = currentProgress * 100;
             //current challenge is closest to completion
             if(percent < 100 && percent > maxProgress){
@@ -433,14 +433,13 @@ public class MainScreen extends Fragment {
                 closestChallenge = current;
             }
             //challenge completed
-            if(lastCheckedSteps >= requirement){
+            if(currentStepCount >= requirement){
                 challenges.remove(i);
                 int exp = current.getXp();
                 mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
                 mDatabase.child("Users").child(user.getUid()).child("Completed").child("Challenge" + current.getId()).setValue(current);
                 userExp += exp;
                 calculatePercent();
-                i--;
 
             }
             i++;

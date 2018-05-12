@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="0dp"
                 android:paddingTop="10dp"
-                android:text="Dont't have an account?"
+                android:text="Don't have an account?"
                 android:textSize="16sp" />
 
             <Button

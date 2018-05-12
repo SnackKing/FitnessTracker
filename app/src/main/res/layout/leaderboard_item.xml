@@ -27,7 +27,7 @@
         <TextView
             android:id="@+id/time"
             android:layout_marginLeft="140dp"
-            android:layout_width="30dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:text="Time" />
     </LinearLayout>

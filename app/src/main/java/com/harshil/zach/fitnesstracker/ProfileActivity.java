@@ -356,7 +356,7 @@ public class ProfileActivity extends AppCompatActivity {
                                     valid = false;
                                 }
                                 if (!SignUpActivity.isPasswordValid(newPassString)) {
-                                    newPass.setError("Password must be at least 8 characters at have 1 letter, 1 number and 1 special character");
+                                    newPass.setError("Password must be at least 8 characters at have 1 uppercase letter, 1 number and 1 special character");
                                     valid = false;
                                 }
                                 if(oldPassString.equals("")){

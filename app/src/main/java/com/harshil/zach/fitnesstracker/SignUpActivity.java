@@ -133,7 +133,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         //Android seem to only allow one error message at a time.
         if(!isPasswordValid(password) && valid){
             mPasswordView.requestFocus();
-            mPasswordView.setError("Password must be at least 8 characters at have 1 letter, 1 number and 1 special character");
+            mPasswordView.setError("Password must be at least 8 characters at have 1 Uppercase letter, 1 number and 1 special character");
             valid = false;
         }
         if(valid) {
