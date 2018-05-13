@@ -99,12 +99,6 @@ public class LoginActivity extends AppCompatActivity {
                            if (task.isSuccessful()) {
                                // Sign in success, update UI with the signed-in user's information
                                FirebaseUser user = firebaseAuth.getCurrentUser();
-                               SharedPreferences sharedPref = getSharedPreferences("auth", 0);
-                               SharedPreferences.Editor editor = sharedPref.edit();
-                               editor.putString("password", password);
-                               editor.commit();
-
-
                                Intent intent = new Intent(context, MainAndRunningTabsScreen.class);
                                context.startActivity(intent);
 

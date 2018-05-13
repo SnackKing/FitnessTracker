@@ -345,7 +345,7 @@ public class MainScreen extends Fragment {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w(TAG, "There was a problem getting the step count.", e);
-                                Toast.makeText(getActivity(),"A problem occurred",Toast.LENGTH_SHORT).show();
+                              //  Toast.makeText(getActivity(),"A problem occurred",Toast.LENGTH_SHORT).show();
 
                             }
                         });
