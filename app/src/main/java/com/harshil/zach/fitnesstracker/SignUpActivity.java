@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -161,8 +162,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                         //signup successful
                         Toast.makeText(SignUpActivity.this, "Successfully registered", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(context, MainAndRunningTabsScreen.class);
-                        context.startActivity(intent);
+                        SharedPreferences sharedPreferences =
+                                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        if (!sharedPreferences.getBoolean("completedBoarding", false)) {
+                            // The user hasn't seen the OnboardingFragment yet, so show it
+                            startActivity(new Intent(SignUpActivity.this, OnBoardingActivity.class));
+                        }
+                        else{
+                            startActivity(new Intent(SignUpActivity.this,MainAndRunningTabsScreen.class));
+                        }
 
                     } else {
                         //signup failed

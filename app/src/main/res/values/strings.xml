@@ -58,9 +58,24 @@
     <string name="aboutDevs">My name is Zachary Allegretti and I am a Computer Science student at The Ohio State University in Columbus, Ohio. This app was
     initially developed as my class project for CSE 5236: Mobile Application Development during the Spring of 2018. Harshil Amin and I worked together to produce a
     mostly complete version of the app. After the class ended I continued development by myself in order to launch it to the Google Play Store.</string>
-    <string name = "aboutApp">Since this is just a personal project, it is 100% free and there are no ads. Furthermore, your data is not being used
+    <string name="aboutApp">Since this is just a personal project, it is 100% free and there are no ads. Furthermore, your data is not being used
     for anything malicious. Your fitness data is stored in Google Fit; The database is handled through Google Firebase; your location is used with
     Google Maps. Because this application is the culmination of many hours of hard work, it is very important that it accurately represents my ability
     to build quality mobile apps. If you encounter any strange behaviors or inconsistencies, please email allegrettidev@gmail.com with details
     about what happened.</string>
+    <string name="title_activity_on_boarding">OnBoardingActivity</string>
+    <string name = "backgroundData">You do not need to launch the app to have your data saved, but launching it will
+    ensure that the most accurate fitness data is being recorded. After the app is launched for the first time, it will
+    update your daily step count, experience, and challenges in the background approximately every 3 hours. This ensures that
+    your fitness data is kept reasonably accurate while limiting the amount of background network usage needed.</string>
+    <string name = "boardDesc1">You have two ranks. Your walking rank is increased by taking steps and completing challenges. Your running
+    rank is increased by completing running challenges. Running challenges can be completed as many times as you want.</string>
+    <string name = "boardDesc2">Some friendly competition never hurts. You can add friends by entering the email address
+    associated with their account. When you add someone, you can see their ranks and running challenge times.
+        Simply tap the magnifying glass to start adding friends. </string>
+    <string name = "boardDesc3">During a running challenge, you can view the distance and time remaining, along with
+        the path you have taken. When you complete the challenge, your time will be added to the leaderboards. You
+    can view the best times on the leaderboard for each challenge. You can complete running challenges as many times
+    as you want. Only your best time will get saved, but you will still earn experience if you complete it.</string>
+
 </resources>

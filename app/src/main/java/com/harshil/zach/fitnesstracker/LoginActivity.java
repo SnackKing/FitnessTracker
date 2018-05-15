@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
@@ -99,8 +100,17 @@ public class LoginActivity extends AppCompatActivity {
                            if (task.isSuccessful()) {
                                // Sign in success, update UI with the signed-in user's information
                                FirebaseUser user = firebaseAuth.getCurrentUser();
-                               Intent intent = new Intent(context, MainAndRunningTabsScreen.class);
-                               context.startActivity(intent);
+                               SharedPreferences sharedPreferences =
+                                       PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                               // Check if we need to display our OnboardingFragment
+                               if (!sharedPreferences.getBoolean("completedBoarding", false)) {
+                                   // The user hasn't seen the OnboardingFragment yet, so show it
+                                   startActivity(new Intent(LoginActivity.this, OnBoardingActivity.class));
+                               }
+                               else{
+                                   startActivity(new Intent(LoginActivity.this,MainAndRunningTabsScreen.class));
+                               }
+
 
                            } else {
                                // If sign in fails, display a message to the user.
