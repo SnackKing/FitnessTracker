@@ -73,8 +73,7 @@
     <string name = "boardDesc2">Some friendly competition never hurts. You can add friends by entering the email address
     associated with their account. When you add someone, you can see their ranks and running challenge times.
         Simply tap the magnifying glass to start adding friends. </string>
-    <string name = "boardDesc3">During a running challenge, you can view the distance and time remaining, along with
-        the path you have taken. When you complete the challenge, your time will be added to the leaderboards. You
+    <string name = "boardDesc3">When you complete a running challenge, your time will be added to the leaderboards. You
     can view the best times on the leaderboard for each challenge. You can complete running challenges as many times
     as you want. Only your best time will get saved, but you will still earn experience if you complete it.</string>
 

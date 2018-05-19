@@ -424,16 +424,23 @@ public class MainScreen extends Fragment {
         while(i < challenges.size()){
             Challenge current = challenges.get(i);
             int requirement = current.getNumSteps();
-            int currentStepCount = Integer.parseInt(stepCount.getText().toString());
-            float currentProgress = (float)currentStepCount/requirement;
-            float percent = currentProgress * 100;
-            //current challenge is closest to completion
-            if(percent < 100 && percent > maxProgress){
+            float percent = 0;
+            if(current.type.equals("daily")) {
+                int currentStepCount = Integer.parseInt(stepCount.getText().toString());
+                float currentProgress = (float) currentStepCount / requirement;
+                percent = currentProgress * 100;
+                //current challenge is closest to completion
+            }
+            else if(current.type.equals("cumulative")){
+                float currentProgress = (float) totalSteps/requirement;
+                percent = currentProgress * 100;
+            }
+            if (percent < 100 && percent > maxProgress) {
                 maxProgress = percent;
                 closestChallenge = current;
             }
             //challenge completed
-            if(currentStepCount >= requirement){
+            if(percent >= 100){
                 challenges.remove(i);
                 int exp = current.getXp();
                 mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);

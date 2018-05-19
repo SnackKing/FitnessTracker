@@ -13,7 +13,7 @@ import android.widget.TextView;
 public class SliderAdapter extends PagerAdapter {
     Context context;
     LayoutInflater inflater;
-    public int[] slide_images = {R.drawable.walk_rank_pic,R.drawable.friend_example,R.drawable.running_example_cropped};
+    public int[] slide_images = {R.drawable.rank_example_edit,R.drawable.friend_example_edit,R.drawable.running_example_edit};
     public String[] slide_headings = {"Level up your fitness","Find and compete with friends", "Run the leaderboards"};
     public  String[] slide_descriptions = {"", "", ""};
 

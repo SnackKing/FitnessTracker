@@ -14,10 +14,10 @@
         android:orientation="vertical">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            android:layout_width="match_parent"
             app:theme="@style/ToolBarStyle"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"/>
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <ListView
             android:layout_marginTop="20px"
             android:id="@+id/challengeDescription"

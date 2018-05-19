@@ -10,16 +10,19 @@ public class Challenge {
     public String title;
     public int xp;
     public int id;
+    public String type;
 
     public Challenge(){
 
     }
-    public Challenge(int days, int numSteps, String title, int xp, int id){
+    public Challenge(int days, int numSteps, String title, int xp, int id,String type){
         this.days = days;
         this.numSteps = numSteps;
         this.title = title;
         this.xp = xp;
         this.id = id;
+        this.type = type;
+
     }
 
     public int getDays(){
@@ -34,7 +37,8 @@ public class Challenge {
     public int getXp(){
         return this.xp;
     }
-    public int getId(){return this.id;};
+    public int getId(){return this.id;}
+    public String getType(){return this.type;}
 
 
 }
