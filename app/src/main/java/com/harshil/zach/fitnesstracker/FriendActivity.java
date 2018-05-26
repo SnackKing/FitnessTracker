@@ -54,10 +54,13 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
     private FirebaseAuth firebaseAuth;
     private static final String TAG = "FriendActivity";
     List<User> friends = new ArrayList<>();
+    List<FriendChallenge> friendChallenges = new ArrayList<>();
+
     private DatabaseReference mDatabase;
     private DatabaseReference uDatabase;
     SearchView editsearch;
     User foundFriend;
+    int userExp;
 
 
 
@@ -119,6 +122,7 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
             public void onDataChange(DataSnapshot snapshot) {
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 User user = snapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
+                userExp = user.xp();
                 ArrayList<String> friendIds = new ArrayList<String>();
                 //In case of emergency, break glass
                 // friends = new ArrayList<User>();
@@ -127,6 +131,16 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                     String id = friendSnapShot.getValue(String.class);
                     User friendFromId = snapshot.child("Users").child(id).getValue(User.class);
                     friends.add(friendFromId);
+                }
+                ArrayList<Integer> completed = new ArrayList<>();
+                for (DataSnapshot postSnapshot : snapshot.child("Users").child(currentUser.getUid()).child("Completed").getChildren()) {
+                    Challenge currentCompleted = postSnapshot.getValue(Challenge.class);
+                    completed.add(currentCompleted.getId());
+                }
+                for(DataSnapshot friendChallenge: snapshot.child("FriendChallenges").child("AddFriends").getChildren()){
+                    if(!completed.contains(friendChallenge.getValue(FriendChallenge.class).getId())){
+                        friendChallenges.add(friendChallenge.getValue(FriendChallenge.class));
+                    }
                 }
 
                 adapter.notifyDataSetChanged();
@@ -205,6 +219,16 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                                 mDatabase.child("Users").child(newFriendId).child("Updates").child("latest").setValue(user.getEmail() + " added you as a friend!");
                                 friends.add(foundFriend);
                                 adapter.notifyDataSetChanged();
+                                int numFriends = friends.size();
+                                for(int i = 0; i < friendChallenges.size()-1;i++){
+                                    FriendChallenge current = friendChallenges.get(i);
+                                    if(numFriends >= current.getNumFriends() ){
+                                        friendChallenges.remove(i);
+                                        mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + current.getXp());
+                                        mDatabase.child("Users").child(user.getUid()).child("Completed").child("af" + current.getId()).setValue(current);
+                                    }
+                                }
+
                                 dialog.dismiss();
                             }
                         });

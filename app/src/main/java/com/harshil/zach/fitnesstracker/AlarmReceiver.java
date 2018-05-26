@@ -75,6 +75,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             Log.i(TAG, "boot received, starting alarm");
             setAlarm(context);
         }
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+
             Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context))
                     .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
                     .addOnSuccessListener(
@@ -94,7 +97,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                     mDatabase.child("Users").child(user.getUid()).child("History").child(formattedDate).setValue(total);
-                                    addExperience(total,context);
+                                    addExperience(total, context);
                                 }
                             })
                     .addOnFailureListener(
@@ -105,6 +108,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                                 }
                             });
+
+        }
 
 
 
@@ -250,12 +255,19 @@ public class AlarmReceiver extends BroadcastReceiver {
         Challenge closestChallenge = null;
         while(i < challenges.size()){
             Challenge current = challenges.get(i);
-            int requirement = current.getNumSteps();
-            float currentProgress = (float) total/requirement;
-            float percent = currentProgress * 100;
-            //current challenge is closest to completion
-            //challenge completed
-            if(total >= requirement){
+            int requirement = current.getRequirement();
+            float percent = 0;
+            if(current.type.equals("daily")) {
+                float currentProgress = (float) total / requirement;
+                percent = currentProgress * 100;
+                //current challenge is closest to completion
+                //challenge completed
+            }
+            else if(current.type.equals("cumulative")){
+                float currentProgress = (float) totalSteps / requirement;
+                percent = currentProgress * 100;
+            }
+            if(percent >= 100){
                 challenges.remove(i);
                 int exp = current.getXp();
                 mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);

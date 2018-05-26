@@ -28,7 +28,7 @@ public class Challenge {
     public int getDays(){
         return this.days;
     }
-    public int getNumSteps(){
+    public int getRequirement(){
         return this.numSteps;
     }
     public String getTitle(){

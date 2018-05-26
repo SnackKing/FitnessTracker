@@ -128,6 +128,11 @@ public class ChallengesActivity extends AppCompatActivity {
                     challenges.add(challenge);
 
                 }
+                for(DataSnapshot postSnapshot : snapshot.child("FriendChallenges").child("AddFriends").getChildren()){
+                    FriendChallenge friendChallenge = postSnapshot.getValue(FriendChallenge.class);
+                    Challenge friendToChallenge = new Challenge(0,friendChallenge.getNumFriends(),friendChallenge.getTitle(),friendChallenge.getXp(),friendChallenge.getId(),"");
+                    challenges.add(friendToChallenge);
+                }
                 adapter.notifyDataSetChanged();
 
             }

@@ -68,6 +68,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
+import static java.lang.Math.max;
 import static java.lang.Math.toIntExact;
 
 
@@ -99,6 +100,7 @@ public class MainScreen extends Fragment {
     TextView rank;
     ArrayList<Rank> ranks;
     ArrayList<Challenge> challenges;
+    ArrayList<FriendChallenge> friendChallenges;
     ArrayList<String> friendIds;
     Rank userNextRank;
     FirebaseUser user;
@@ -108,6 +110,7 @@ public class MainScreen extends Fragment {
     boolean dataRead;
     TextView friendText;
     View view;
+    int numFriends = 0;
 
 
 
@@ -122,6 +125,7 @@ public class MainScreen extends Fragment {
 
         ranks = new ArrayList<>();
         challenges = new ArrayList<>();
+        friendChallenges = new ArrayList<>();
         friendIds = new ArrayList<>();
         userExp = -1;
         userRank = -1;
@@ -212,9 +216,17 @@ public class MainScreen extends Fragment {
                         challenges.add(currentChallenge);
                     }
                 }
+                for(DataSnapshot friendChallenge: dataSnapshot.child("FriendChallenges").child("AddFriends").getChildren()){
+                    if(!completed.contains(friendChallenge.getValue(FriendChallenge.class).getId())){
+                        friendChallenges.add(friendChallenge.getValue(FriendChallenge.class));
+                    }
+                }
                 for(DataSnapshot postSnapshot: dataSnapshot.child("Users").child(currentUser.getUid()).child("FriendedBy").getChildren()){
                     String friendId = postSnapshot.getValue(String.class);
                     friendIds.add(friendId);
+                }
+                for(DataSnapshot friend: dataSnapshot.child("Users").child(currentUser.getUid()).child("Friends").getChildren()){
+                    numFriends++;
                 }
                 String update = dataSnapshot.child("Users").child(currentUser.getUid()).child("Updates").child("latest").getValue(String.class);
                 if(update == null){
@@ -420,10 +432,10 @@ public class MainScreen extends Fragment {
     private void checkChallenges(){
         int i = 0;
         float maxProgress = -1;
-        Challenge closestChallenge = null;
+        String closestChallenge = null;
         while(i < challenges.size()){
             Challenge current = challenges.get(i);
-            int requirement = current.getNumSteps();
+            int requirement = current.getRequirement();
             float percent = 0;
             if(current.type.equals("daily")) {
                 int currentStepCount = Integer.parseInt(stepCount.getText().toString());
@@ -437,7 +449,7 @@ public class MainScreen extends Fragment {
             }
             if (percent < 100 && percent > maxProgress) {
                 maxProgress = percent;
-                closestChallenge = current;
+                closestChallenge = current.getTitle();
             }
             //challenge completed
             if(percent >= 100){
@@ -451,6 +463,19 @@ public class MainScreen extends Fragment {
             }
             i++;
         }
+        i = 0;
+        while(i < friendChallenges.size()){
+            FriendChallenge currentFriendChallege = friendChallenges.get(i);
+            float currentProgress = (float) numFriends / currentFriendChallege.getNumFriends();
+            float percent = currentProgress * 100;
+            //this should never be over 100, but just in case something terribly wrong happens.
+            if(percent < 100 && percent > maxProgress){
+                maxProgress = percent;
+                closestChallenge = currentFriendChallege.getTitle();
+            }
+            i++;
+
+        }
         //no incomplete challenges remain
         if(closestChallenge == null && challenges.size() == 0){
             challenge.setText("All challenges completed");
@@ -458,7 +483,7 @@ public class MainScreen extends Fragment {
         }
         //update UI to reflect closest challenge to completion
         else{
-            challenge.setText(closestChallenge.getTitle());
+            challenge.setText(closestChallenge);
             challengeProgress.setProgress(Math.round(maxProgress));
         }
 
