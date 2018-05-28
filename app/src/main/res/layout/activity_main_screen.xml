@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:textColor="@android:color/white"
                 android:layout_height="wrap_content"
-                android:text="Update" />
+                android:text="Refresh" />
         </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -167,7 +167,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/friendText"
-                    android:text = "Your Friends"
+                    android:text = "All Updates"
                     android:background="@color/colorAccent"
                     android:textColor="@android:color/white"
                     android:id = "@+id/friendsButton"/>

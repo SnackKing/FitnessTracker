@@ -155,8 +155,8 @@ public class MainScreen extends Fragment {
         friends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToFriendsPage = new Intent(getActivity(), FriendActivity.class);
-                startActivity(goToFriendsPage);
+                Intent goToNotificationsPage = new Intent(getActivity(), NotificationsActivity.class);
+                startActivity(goToNotificationsPage);
             }
         });
         if (savedInstanceState != null) {
@@ -491,8 +491,11 @@ public class MainScreen extends Fragment {
     public void pushNotification(){
         String newRank = rank.getText().toString();
         String notification = userName + " just reached rank " + newRank.toString();
+        String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
         for(String userId: friendIds){
             mDatabase.child("Users").child(userId).child("Updates").child("latest").setValue(notification);
+            mDatabase.child("Users").child(userId).child("Updates").child("All").child(currentTime).setValue(notification);
+
         }
     }
     public void getLastCheckedSteps(){

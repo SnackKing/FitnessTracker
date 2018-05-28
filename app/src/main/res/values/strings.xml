@@ -64,17 +64,18 @@
     to build quality mobile apps. If you encounter any strange behaviors or inconsistencies, please email allegrettidev@gmail.com with details
     about what happened.</string>
     <string name="title_activity_on_boarding">OnBoardingActivity</string>
-    <string name = "backgroundData">You do not need to launch the app to have your data saved, but launching it will
+    <string name="backgroundData">You do not need to launch the app to have your data saved, but launching it will
     ensure that the most accurate fitness data is being recorded. After the app is launched for the first time, it will
     update your daily step count, experience, and challenges in the background approximately every 3 hours. This ensures that
     your fitness data is kept reasonably accurate while limiting the amount of background network usage needed.</string>
-    <string name = "boardDesc1">You have two ranks. Your walking rank is increased by taking steps and completing challenges. Your running
+    <string name="boardDesc1">You have two ranks. Your walking rank is increased by taking steps and completing challenges. Your running
     rank is increased by completing running challenges. Running challenges can be completed as many times as you want.</string>
-    <string name = "boardDesc2">Some friendly competition never hurts. You can add friends by entering the email address
+    <string name="boardDesc2">Some friendly competition never hurts. You can add friends by entering the email address
     associated with their account. When you add someone, you can see their ranks and running challenge times.
         Simply tap the magnifying glass to start adding friends. </string>
-    <string name = "boardDesc3">When you complete a running challenge, your time will be added to the leaderboards. You
+    <string name="boardDesc3">When you complete a running challenge, your time will be added to the leaderboards. You
     can view the best times on the leaderboard for each challenge. You can complete running challenges as many times
     as you want. Only your best time will get saved, but you will still earn experience if you complete it.</string>
+    <string name="title_activity_notifications">Notifications</string>
 
 </resources>

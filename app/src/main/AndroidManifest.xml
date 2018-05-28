@@ -107,7 +107,11 @@
         <activity
             android:name=".OnBoardingActivity"
             android:label="@string/title_activity_on_boarding"
-            android:theme="@style/AppTheme.OnBoard"></activity>
+            android:theme="@style/AppTheme.OnBoard" />
+        <activity
+            android:name=".NotificationsActivity"
+            android:label="@string/title_activity_notifications"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

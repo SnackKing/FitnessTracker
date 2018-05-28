@@ -42,7 +42,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -211,12 +213,15 @@ public class FriendActivity extends AppCompatActivity implements SearchView.OnQu
                         email.setText(foundFriend.getEmail());
                         rank.setText(Integer.toString(foundFriend.getRank()));
                         runRank.setText(Integer.toString(foundFriend.getRunRank()));
+                        final String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
                         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String userAltEmail = user.getEmail().replace('.',',');
                                 mDatabase.child("Users").child(user.getUid()).child("Friends").child(adjustedQuery).setValue(newFriendId);
                                 mDatabase.child("Users").child(newFriendId).child("FriendedBy").child(userAltEmail).setValue(user.getUid());
                                 mDatabase.child("Users").child(newFriendId).child("Updates").child("latest").setValue(user.getEmail() + " added you as a friend!");
+                                mDatabase.child("Users").child(newFriendId).child("Updates").child("All").child(currentTime).setValue(user.getEmail() + " added you as a friend!");
+
                                 friends.add(foundFriend);
                                 adapter.notifyDataSetChanged();
                                 int numFriends = friends.size();
