@@ -65,7 +65,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     ArrayList<Challenge> challenges = new ArrayList<>();
     ArrayList<String> friendIds = new ArrayList<>();
     Rank userNextRank;
-    FirebaseUser user;
     String userName;
 
     @Override
@@ -75,8 +74,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             Log.i(TAG, "boot received, starting alarm");
             setAlarm(context);
         }
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null) {
 
             Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context))
                     .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
@@ -109,7 +106,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 }
                             });
 
-        }
+
 
 
 
@@ -120,12 +117,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         AlarmManager am =( AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + (3*AlarmManager.INTERVAL_HOUR),
-                (3*AlarmManager.INTERVAL_HOUR), alarmIntent);
+                SystemClock.elapsedRealtime() + (2*AlarmManager.INTERVAL_HOUR),
+                (2*AlarmManager.INTERVAL_HOUR), alarmIntent);
     }
     public void addExperience(final long total, final Context context){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-       final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -204,10 +201,10 @@ public class AlarmReceiver extends BroadcastReceiver {
                 userExp += exp;
 
                 //update UI and potentially rank
-               boolean over100 =  calculatePercent();
-               if(over100){
-                   increaseRank();
-               }
+                boolean over100 =  calculatePercent();
+                if(over100){
+                    increaseRank();
+                }
                 Date c = Calendar.getInstance().getTime();
                 String formattedDate = sdf.format(c);
                 //update counter for next check in

@@ -264,7 +264,8 @@ public class MainScreen extends Fragment {
             am.cancel(alarmIntent);
         }
         am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + (3* AlarmManager.INTERVAL_HOUR),(3* AlarmManager.INTERVAL_HOUR), alarmIntent);
+                SystemClock.elapsedRealtime() + (2* AlarmManager.INTERVAL_HOUR),(2* AlarmManager.INTERVAL_HOUR), alarmIntent);
+
         getLastCheckedSteps();
         Calendar calendar=Calendar.getInstance();
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");

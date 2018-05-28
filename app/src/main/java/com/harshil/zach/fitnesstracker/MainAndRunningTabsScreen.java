@@ -1,5 +1,8 @@
 package com.harshil.zach.fitnesstracker;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -123,6 +126,12 @@ public class MainAndRunningTabsScreen extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
             case R.id.action_sign_out:
+                Intent amIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, amIntent, 0);
+                AlarmManager am =( AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                if (am!= null) {
+                    am.cancel(alarmIntent);
+                }
                 FirebaseAuth.getInstance().signOut();
                 GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).requestEmail().build();
                 GoogleSignInClient mAccount = GoogleSignIn.getClient(this,gso);
