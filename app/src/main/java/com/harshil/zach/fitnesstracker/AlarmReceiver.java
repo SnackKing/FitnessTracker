@@ -152,10 +152,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                     String friendId = postSnapshot.getValue(String.class);
                     friendIds.add(friendId);
                 }
-                String update = dataSnapshot.child("Users").child(user.getUid()).child("Updates").child("latest").getValue(String.class);
-                if(update == null){
-                    update = "No new updates";
-                }
 
                 if(ranks.size() != 0){
                     userNextRank = ranks.get(userRank);
@@ -238,8 +234,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Users").child(user.getUid()).child("rank").setValue(userNextRank.level());
         String notification = userName + " just reached rank " + Integer.toString(userNextRank.level());
+        String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
         for(String userId: friendIds){
             mDatabase.child("Users").child(userId).child("Updates").child("latest").setValue(notification);
+            mDatabase.child("Users").child(userId).child("Updates").child("All").child(currentTime).setValue(notification);
         }
 
     }
