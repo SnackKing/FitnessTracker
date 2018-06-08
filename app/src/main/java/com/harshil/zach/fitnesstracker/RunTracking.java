@@ -1,33 +1,28 @@
 package com.harshil.zach.fitnesstracker;
 
-import android.*;
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.CountDownTimer;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Chronometer;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -40,17 +35,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import models.RunningChallenge;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -63,12 +55,14 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     ArrayAdapter<String> adapter;
     FloatingActionButton stop;
     RunningChallenge challenge;
+    boolean isFreeMode;
     String time;
+    Chronometer chronometer;
     private GoogleApiClient mGoogleApiClient;
     public static final String TAG = "TAG";
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
-
+    String freeRunTime;
     Location originalLocation;
     double distance;
     float distanceTraveled = 0;
@@ -80,6 +74,7 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     ArrayList<LatLng> polyLocations = new ArrayList<>();
     CountDownTimer runTimer;
     CountDownTimer startTimer;
+    Chronometer freeRunTimer;
     LocationCallback locationCallback;
     LocationManager locationManager;
 
@@ -88,9 +83,9 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run_tracking);
-
         Intent intent = getIntent();
         challenge = (RunningChallenge) intent.getSerializableExtra("challenge");
+        isFreeMode = intent.getBooleanExtra("isFreeMode",false);
         timeRemaining = challenge.getTime();
         ListView list = findViewById(R.id.challengeDescription);
         distance = challenge.getDistance();
@@ -98,7 +93,7 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_container);
         mapFragment.getMapAsync(this);
-
+        chronometer = findViewById(R.id.simpleChronometer);
         stop = (FloatingActionButton) findViewById(R.id.stop_button);
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,11 +103,23 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         });
 
         info.clear();
-        String description = challenge.getDescription();
-        String distance = Double.toString(challenge.getDistance());
-        time = challenge.getTime();
-        String xp = Integer.toString(challenge.getXp());
+
+        String description = "Run for as long as you want!";
+        String distance = "0";
+        time = "0:00";
+        String xp = "10 xp for every 0.1 miles ran";
+        if(!isFreeMode) {
+            description = challenge.getDescription();
+            distance = Double.toString(challenge.getDistance());
+            time = challenge.getTime();
+            xp = Integer.toString(challenge.getXp());
+        }
+        if(!isFreeMode){
         info.add("Distance: " + distance + " miles");
+        }
+        else{
+         info.add("Distance so far: 0 miles");
+        }
         info.add("Time: " + time);
         info.add("Start in: ");
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, info);
@@ -203,34 +210,53 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         long minToMilli = mins * 60000;
         long secToMilli = secs * 1000;
 
+        if(isFreeMode){
+            chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                @Override
+                public void onChronometerTick(Chronometer chronometer) {
+                    String time = chronometer.getText().toString();
+                    freeRunTime = time;
+                    info.set(1, "Time: " + time);
+                    adapter.notifyDataSetChanged();
+                    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        Toast.makeText(RunTracking.this, "GPS Connection lost!", Toast.LENGTH_LONG).show();
+                        endRunTracking();
+                    }
 
-        runTimer = new CountDownTimer(minToMilli + secToMilli, 1000){
+                }
+            });
+            chronometer.setBase(SystemClock.elapsedRealtime());
+            chronometer.start();
 
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long min = (millisUntilFinished/1000)/60;
-                long sec = (millisUntilFinished/1000)%60;
-                if (sec < 10){
-                    timeRemaining = Long.toString(min) + ":0" + Long.toString(sec);
-                    info.set(1, "Time remaining: " + timeRemaining);
+        }
+        else {
+            runTimer = new CountDownTimer(minToMilli + secToMilli, 1000) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    long min = (millisUntilFinished / 1000) / 60;
+                    long sec = (millisUntilFinished / 1000) % 60;
+                    if (sec < 10) {
+                        timeRemaining = Long.toString(min) + ":0" + Long.toString(sec);
+                        info.set(1, "Time remaining: " + timeRemaining);
+                    } else {
+                        timeRemaining = Long.toString(min) + ":" + Long.toString(sec);
+                        info.set(1, "Time remaining: " + timeRemaining);
+                    }
+                    adapter.notifyDataSetChanged();
+                    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        Toast.makeText(RunTracking.this, "GPS Connection lost!", Toast.LENGTH_LONG).show();
+                        endRunTracking();
+                    }
                 }
-                else {
-                    timeRemaining = Long.toString(min) + ":" + Long.toString(sec);
-                    info.set(1, "Time remaining: " + timeRemaining);
-                }
-                adapter.notifyDataSetChanged();
-                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                    Toast.makeText(RunTracking.this, "GPS Connection lost!", Toast.LENGTH_LONG).show();
+
+                @Override
+                public void onFinish() {
+                    timeRemaining = "0:00";
                     endRunTracking();
                 }
-            }
-
-            @Override
-            public void onFinish() {
-                timeRemaining = "0:00";
-                endRunTracking();
-            }
-        }.start();
+            }.start();
+        }
 
 
     }
@@ -269,14 +295,20 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
                    distanceTraveled = distanceTraveled + location.distanceTo(originalLocation);
                    originalLocation = location;
                    distanceInMiles = distanceTraveled * 0.00062137;
-                   distanceRemaining = distance - distanceInMiles;
-                   distanceRemaining = Math.round(distanceRemaining * 100.0) / 100.0;
-                   if (distanceRemaining <= 0) {
-                       distanceRemaining = 0.00;
-                       endRunTracking();
+                   if(isFreeMode){
+                       info.set(0, "Distance Ran: " + Double.toString(round(distanceInMiles,1)));
+                       distanceRemaining = Math.round(distanceRemaining * 100.0) / 100.0;
                    }
-                   info.set(0, "Distance Remaining: " + Double.toString(distanceRemaining));
-                   adapter.notifyDataSetChanged();
+                   else {
+                       distanceRemaining = distance - distanceInMiles;
+                       distanceRemaining = Math.round(distanceRemaining * 100.0) / 100.0;
+                       if (distanceRemaining <= 0) {
+                           distanceRemaining = 0.00;
+                           endRunTracking();
+                       }
+                       info.set(0, "Distance Remaining: " + Double.toString(distanceRemaining));
+                       adapter.notifyDataSetChanged();
+                   }
 
                }
            }
@@ -336,13 +368,25 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
         }
         Intent intent = new Intent(RunTracking.this, RunningResultsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("time", timeRemaining);
-        intent.putExtra("distanceLeft", distanceRemaining);
-        intent.putExtra("challenge", challenge);
+        intent.putExtra("isFreeMode",isFreeMode);
+        if(isFreeMode){
+            intent.putExtra("time", freeRunTime);
+            intent.putExtra("challenge",challenge);
+            intent.putExtra("distanceLeft", distanceInMiles);
+        }
+        else {
+            intent.putExtra("time", timeRemaining);
+            intent.putExtra("distanceLeft", distanceRemaining);
+            intent.putExtra("challenge", challenge);
+        }
         Bundle b = new Bundle();
         b.putParcelableArrayList("polyLocations", polyLocations);
         intent.putExtras(b);
         startActivity(intent);
         RunTracking.this.finish();
+    }
+    private static double round (double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 }

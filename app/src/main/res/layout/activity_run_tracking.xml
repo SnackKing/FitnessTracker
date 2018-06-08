@@ -41,5 +41,11 @@
 
 
     </LinearLayout>
+    <Chronometer
+        android:id="@+id/simpleChronometer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:clickable="false"/>
 
 </android.support.constraint.ConstraintLayout>

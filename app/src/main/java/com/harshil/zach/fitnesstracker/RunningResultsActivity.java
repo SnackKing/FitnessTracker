@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.CountDownTimer;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,18 +34,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import models.Rank;
+import models.RunningChallenge;
+import models.User;
 
 public class RunningResultsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
     private RunningChallenge challenge;
-    private double distanceLeft;
+    private double distance;
     private String timeLeft;
     private String completed;
     private GoogleMap mMap;
@@ -65,6 +64,7 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
     int runRank;
     List<Rank> ranks = new ArrayList<>();
     Rank nextRank;
+    boolean isFreeMode;
     boolean success = false;
     boolean keepGoing = true;
     LocationManager locationManager;
@@ -78,8 +78,9 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         polyPlaces = getIntent().getParcelableArrayListExtra("polyLocations");
         ListView list = (ListView) findViewById(R.id.results);
         challenge = (RunningChallenge) getIntent().getSerializableExtra("challenge");
-        distanceLeft = getIntent().getDoubleExtra("distanceLeft", 0);
+        distance = getIntent().getDoubleExtra("distanceLeft", 0);
         timeLeft = getIntent().getStringExtra("time");
+        isFreeMode = getIntent().getBooleanExtra("isFreeMode",false);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,12 +130,18 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         user = firebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         final String timeTaken = getStringTimeTaken(timeLeft, challenge.getTime());
-        if (distanceLeft <= 0){
-            completed = "You completed the challenge!";
+        if(isFreeMode) {
             success = true;
+            double roundedDistance = round(distance,1);
+            completed = "You ran " + roundedDistance + " miles and earned " + (int)(roundedDistance*100) + " xp";
         }
-        else{
-            completed = "You did not complete the challenge!";
+        else {
+            if (distance <= 0) {
+                completed = "You completed the challenge!";
+                success = true;
+            } else {
+                completed = "You did not complete the challenge!";
+            }
         }
 
 
@@ -153,10 +160,12 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
                 if (success && keepGoing){
                     keepGoing = false;
                     addExperience();
-                    String previousBest =  dataSnapshot.child("RunningChallenges").child(Integer.toString(challenge.getId())).child("Leaderboard").child(currentUser.getUid()).getValue(String.class);
-                    if(isBetterTime(timeTaken,previousBest)){
-                        mDatabase.child("RunningChallenges").child(Integer.toString(challenge.getId())).child("Leaderboard").child(currentUser.getUid()).setValue(timeTaken);
+                    if(!isFreeMode) {
+                        String previousBest = dataSnapshot.child("RunningChallenges").child(Integer.toString(challenge.getId())).child("Leaderboard").child(currentUser.getUid()).getValue(String.class);
+                        if (isBetterTime(timeTaken, previousBest)) {
+                            mDatabase.child("RunningChallenges").child(Integer.toString(challenge.getId())).child("Leaderboard").child(currentUser.getUid()).setValue(timeTaken);
 
+                        }
                     }
                 }
 
@@ -170,9 +179,15 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         });
 
         info.add(completed);
-        info.add("Challenge Description: " + challenge.getDescription());
-        info.add("Time Remaining: " + timeLeft);
-        info.add("Distance Remaining: " + Double.toString(distanceLeft) + " miles");
+
+        if(!isFreeMode){
+            info.add("Challenge Description: " + challenge.getDescription());
+            info.add("Time Remaining: " + timeLeft);
+            info.add("Distance Remaining: " + Double.toString(distance) + " miles");
+        }
+        else{
+            info.add("Time Taken: " + timeLeft);
+        }
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, info);
         list.setAdapter(adapter);
 
@@ -252,7 +267,12 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void addExperience(){
-            updatedExp = userExp + challenge.getXp();
+            if(isFreeMode){
+                updatedExp = userExp + ((int) Math.round(distance*100));
+            }
+            else {
+                updatedExp = userExp + challenge.getXp();
+            }
             mDatabase.child("Users").child(user.getUid()).child("runXp").setValue(updatedExp);
             int i = 0;
             while (i < ranks.size()){
@@ -293,5 +313,9 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         return isBetter;
 
 
+    }
+    private static double round (double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 }

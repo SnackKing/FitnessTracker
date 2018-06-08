@@ -1,4 +1,4 @@
-package com.harshil.zach.fitnesstracker;
+package adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.harshil.zach.fitnesstracker.R;
 
 public class SliderAdapter extends PagerAdapter {
     Context context;

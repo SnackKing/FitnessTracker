@@ -1,4 +1,4 @@
-package com.harshil.zach.fitnesstracker;
+package models;
 
 /**
  * Created by Zach on 3/10/2018.

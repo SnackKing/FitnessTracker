@@ -2,7 +2,6 @@ package com.harshil.zach.fitnesstracker;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -17,42 +16,27 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.Query;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import android.Manifest;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import models.RunningChallenge;
 
 
 public class RunningChallengePage extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -78,8 +62,8 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
         ListView list = findViewById(R.id.challengeDescription);
 
         Intent intent = getIntent();
+        final boolean isFreeMode = intent.getBooleanExtra("isFreeMode",false);
         final RunningChallenge challenge = (RunningChallenge) intent.getSerializableExtra("challenge");
-
         mDrawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -139,18 +123,25 @@ public class RunningChallengePage extends AppCompatActivity implements OnMapRead
                 else {
                     Intent startChallenge = new Intent(RunningChallengePage.this, RunTracking.class);
                     startChallenge.putExtra("challenge", challenge);
+                    startChallenge.putExtra("isFreeMode",isFreeMode);
                     startActivity(startChallenge);
                 }
             }
         });
 
         info.clear();
-        String description = challenge.getDescription();
-        String distance = Double.toString(challenge.getDistance());
-        String time = challenge.getTime();
-        String xp = Integer.toString(challenge.getXp());
+        String description = "Run for as long as you want!";
+        String distance = "As far as you want!";
+        String time = "As long as you want!";
+        String xp = "10 xp for every 0.1 miles";
+        if(!isFreeMode){
+            description = challenge.getDescription();
+            distance = Double.toString(challenge.getDistance()) + " miles";
+            time = challenge.getTime();
+            xp = Integer.toString(challenge.getXp());
+        }
         info.add("Description: " + description);
-        info.add("Distance: " + distance + " miles");
+        info.add("Distance: " + distance);
         info.add("Time: " + time);
         info.add("XP: " + xp);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, info);

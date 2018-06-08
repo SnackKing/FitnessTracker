@@ -3,18 +3,12 @@ package com.harshil.zach.fitnesstracker;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,23 +20,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.firebase.ui.database.FirebaseListAdapter;
-import com.firebase.ui.database.FirebaseListOptions;
-import com.google.android.gms.auth.api.Auth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import models.Rank;
+import models.RunningChallenge;
+import models.User;
 
 public class RunningPage extends Fragment {
 
@@ -93,7 +77,9 @@ public class RunningPage extends Fragment {
                 setView();
                 rankDescription.setText(Integer.toString(runRank));
                 challengeDescriptions.clear();
-
+                //unlimited mode
+                challengeDescriptions.add("Free Running Mode");
+                challenges.add(new RunningChallenge("Free Running Mode",0,"0:00",0,99999));
                 for (DataSnapshot postSnapshot : dataSnapshot.child("RunningChallenges").getChildren()) {
                     //Getting the data from snapshot
                     RunningChallenge challenge = postSnapshot.getValue(RunningChallenge.class);
@@ -118,7 +104,13 @@ public class RunningPage extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 Intent intent = new Intent(getActivity(), RunningChallengePage.class);
-                intent.putExtra("challenge", challenges.get(position));
+                boolean isFreeMode = false;
+                if(position == 0){
+                    isFreeMode = true;
+                }
+                intent.putExtra("isFreeMode",isFreeMode);
+                intent.putExtra("challenge", challenges.get(position + 1));
+
                 startActivity(intent);
             }
         });

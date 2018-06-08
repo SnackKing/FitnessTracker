@@ -1,4 +1,4 @@
-package com.harshil.zach.fitnesstracker;
+package adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.harshil.zach.fitnesstracker.R;
 
 import org.w3c.dom.Text;
 

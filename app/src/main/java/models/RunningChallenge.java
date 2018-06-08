@@ -1,4 +1,4 @@
-package com.harshil.zach.fitnesstracker;
+package models;
 
 import java.io.Serializable;
 

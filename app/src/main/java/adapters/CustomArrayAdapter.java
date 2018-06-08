@@ -1,4 +1,4 @@
-package com.harshil.zach.fitnesstracker;
+package adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.harshil.zach.fitnesstracker.R;
+
 import java.util.List;
+
+import models.Challenge;
 
 /**
  * Created by Zach on 2/21/2018.
