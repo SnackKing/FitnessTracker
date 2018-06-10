@@ -182,6 +182,10 @@ public class AlarmReceiver extends BroadcastReceiver {
                 int exp = (int) total - (int)lastCheckedSteps;
                 //subtract different in steps to prevent duplicate xp awards
                 int totalSteps = dataSnapshot.child("Users").child(user.getUid()).child("totalSteps").getValue(Integer.class);
+                int dailyRecord = dataSnapshot.child("Users").child(user.getUid()).child("dailyRecord").getValue(Integer.class);
+                if(total > dailyRecord){
+                    mDatabase.child("Users").child(user.getUid()).child("dailyRecord").setValue(total);
+                }
                 userExp = dataSnapshot.child("Users").child(user.getUid()).child("xp").getValue(Integer.class);
                 mDatabase.child("Users").child(user.getUid()).child("totalSteps").setValue(totalSteps + exp);
                 totalSteps += exp;
@@ -189,7 +193,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 exp = exp/100;
                 mDatabase.child("Users").child(user.getUid()).child("xp").setValue(userExp + exp);
                 userExp += exp;
-
                 //update UI and potentially rank
                 boolean over100 =  calculatePercent();
                 if(over100){

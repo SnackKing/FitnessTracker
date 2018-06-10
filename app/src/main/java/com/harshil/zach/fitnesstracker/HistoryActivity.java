@@ -69,6 +69,7 @@ public class HistoryActivity extends AppCompatActivity
     DatabaseReference mDatabase;
     TextView totalSteps;
     TextView averageSteps;
+    TextView recordSteps;
     Spinner spinner;
     final int WEEK = 0;
     final int MONTH = 1;
@@ -82,6 +83,7 @@ public class HistoryActivity extends AppCompatActivity
         setContentView(R.layout.activity_history);
         totalSteps = findViewById(R.id.totalSteps);
         averageSteps = findViewById(R.id.averageSteps);
+        recordSteps = findViewById(R.id.recordSteps);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -203,6 +205,7 @@ public class HistoryActivity extends AppCompatActivity
 
                 User user = snapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 totalSteps.setText("Cumulative Steps Taken: " + Integer.toString(user.totalSteps()));
+                recordSteps.setText("Most Steps in a Day: " + Integer.toString(user.getDailyRecord()));
                 SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
                 Date accountCreationDate = null;
                 try {

@@ -22,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import models.Rank;
@@ -39,6 +41,7 @@ public class RunningPage extends Fragment {
     List<String> challengeDescriptions = new ArrayList<>();
     ArrayAdapter<String> adapter;
     List<RunningChallenge> challenges = new ArrayList<>();
+
     List<Rank> ranks = new ArrayList<>();
     Rank nextRank;
     int runRank;
@@ -67,13 +70,13 @@ public class RunningPage extends Fragment {
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 User user = dataSnapshot.child("Users").child(currentUser.getUid()).getValue(User.class);
                 userExp = user.getRunXp();
-
                 runRank = user.getRunRank();
                 ranks.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.child("Ranks").getChildren()) {
                     Rank current = postSnapshot.getValue(Rank.class);
                     ranks.add(current);
                 }
+
                 setView();
                 rankDescription.setText(Integer.toString(runRank));
                 challengeDescriptions.clear();
@@ -133,9 +136,10 @@ public class RunningPage extends Fragment {
         }
 
         progress.setDonut_progress(Integer.toString(Math.round(percent)));
-        progress.setText(Integer.toString(userExp));
+        progress.setText(Integer.toString(userExp) + "/" + nextRank.getXp());
 
 
     }
+
 
 }

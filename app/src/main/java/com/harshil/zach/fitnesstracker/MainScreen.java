@@ -94,6 +94,7 @@ public class MainScreen extends Fragment {
     ProgressBar challengeProgress;
     boolean dataRead;
     TextView friendText;
+    int dailyRecord = 0;
     View view;
     int numFriends = 0;
 
@@ -181,6 +182,8 @@ public class MainScreen extends Fragment {
                 userExp = user.xp();
                 userRank = user.getRank();
                 totalSteps = user.totalSteps();
+                dailyRecord = user.dailyRecord;
+
                 rank.setText(Integer.toString(userRank));
                 //get list of completed challenges
                 ArrayList<Integer> completed = new ArrayList<>();
@@ -357,6 +360,10 @@ public class MainScreen extends Fragment {
     private void addExperience(final long total){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
         getLastCheckedSteps();
+        if(total > dailyRecord){
+            dailyRecord = (int)total;
+            mDatabase.child("Users").child(user.getUid()).child("dailyRecord").setValue(total);
+        }
         //subtract different in steps to prevent duplicate xp awards
         int exp = (int) total - (int)lastCheckedSteps;
         mDatabase.child("Users").child(user.getUid()).child("totalSteps").setValue(totalSteps + exp);

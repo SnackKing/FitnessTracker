@@ -59,6 +59,14 @@
                 android:textSize="18sp"
                 android:textColor="@android:color/white"
                 android:text="Fetching Data..."/>
+            <TextView
+                android:id="@+id/recordSteps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                android:text="Fetching Data..."/>
         </LinearLayout>
 
         </LinearLayout>

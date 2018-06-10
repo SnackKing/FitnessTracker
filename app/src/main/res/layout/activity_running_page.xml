@@ -44,7 +44,7 @@
                 android:layout_marginTop="8dp"
                 app:donut_circle_starting_degree="270"
                 app:donut_finished_color="@color/colorAccent"
-                app:donut_text="x/y"
+                app:donut_text="Updating"
                 app:donut_text_color="@android:color/black" />
          </RelativeLayout>
 
@@ -53,8 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingTop="15dp"
-            android:text="Select a Challenge"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+            android:textSize="18sp"
+            android:text="Select a Challenge" />
 
 
         <ListView
