@@ -74,7 +74,6 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     ArrayList<LatLng> polyLocations = new ArrayList<>();
     CountDownTimer runTimer;
     CountDownTimer startTimer;
-    Chronometer freeRunTimer;
     LocationCallback locationCallback;
     LocationManager locationManager;
 
@@ -203,7 +202,9 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
     private void startRun(){
 
         originalLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        info.set(0, "Distance remaining: " + Double.toString(distance));
+        if(!isFreeMode) {
+            info.set(0, "Distance remaining: " + Double.toString(distance));
+        }
         adapter.notifyDataSetChanged();
         int mins = challenge.getTimeMinutes(time);
         int secs = challenge.getTimeSeconds(time);
@@ -227,6 +228,8 @@ public class RunTracking extends AppCompatActivity implements OnMapReadyCallback
             });
             chronometer.setBase(SystemClock.elapsedRealtime());
             chronometer.start();
+
+            System.out.print("test");
 
         }
         else {

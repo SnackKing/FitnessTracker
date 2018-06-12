@@ -112,7 +112,7 @@ public class RunningPage extends Fragment {
                     isFreeMode = true;
                 }
                 intent.putExtra("isFreeMode",isFreeMode);
-                intent.putExtra("challenge", challenges.get(position + 1));
+                intent.putExtra("challenge", challenges.get(position));
 
                 startActivity(intent);
             }

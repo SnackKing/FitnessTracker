@@ -129,7 +129,12 @@ public class RunningResultsActivity extends AppCompatActivity implements OnMapRe
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        final String timeTaken = getStringTimeTaken(timeLeft, challenge.getTime());
+        String tempTimeTaken = "";
+        if(!isFreeMode) {
+             tempTimeTaken = getStringTimeTaken(timeLeft, challenge.getTime());
+        }
+
+        final String timeTaken = tempTimeTaken;
         if(isFreeMode) {
             success = true;
             double roundedDistance = round(distance,1);
